@@ -1,9 +1,18 @@
 import type { NextPage } from 'next';
-import Head from 'next/head';
-import Image from 'next/image';
+import { signIn, useSession } from 'next-auth/react';
 const Home: NextPage = () => {
+  const { data } = useSession();
+  console.log(data);
+
   return (
-    <h1 className='text-3xl text-red-700 font-bold underline'>Hello world!</h1>
+    <div className='h-screen mx-auto'>
+      <button
+        className='px-4 py-6 bg-blue-500'
+        onClick={() => signIn('google')}
+      >
+        SignIn
+      </button>
+    </div>
   );
 };
 
