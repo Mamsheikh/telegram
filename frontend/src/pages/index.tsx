@@ -1,19 +1,34 @@
-import type { NextPage } from 'next';
-import { signIn, useSession } from 'next-auth/react';
+import type { NextPage, NextPageContext } from 'next';
+import { getSession, signIn, useSession } from 'next-auth/react';
+import Auth from '../components/Auth';
+import Chat from '../components/Chat';
 const Home: NextPage = () => {
-  const { data } = useSession();
-  console.log(data);
+  const { data: session } = useSession();
+
+  const reloadSession = () => {
+    const event = new Event('visibilitychange');
+    document.dispatchEvent(event);
+  };
 
   return (
-    <div className='h-screen mx-auto'>
-      <button
-        className='px-4 py-6 bg-blue-500'
-        onClick={() => signIn('google')}
-      >
-        SignIn
-      </button>
+    <div>
+      {session?.user?.username ? (
+        <Chat />
+      ) : (
+        <Auth session={session} reloadSession={reloadSession} />
+      )}
     </div>
   );
 };
+
+export async function getServerSideProps(context: NextPageContext) {
+  const session = await getSession(context);
+
+  return {
+    props: {
+      session,
+    },
+  };
+}
 
 export default Home;
