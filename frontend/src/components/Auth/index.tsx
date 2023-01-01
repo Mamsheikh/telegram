@@ -1,4 +1,6 @@
 import { Session } from 'next-auth';
+import { signIn } from 'next-auth/react';
+import { useState } from 'react';
 
 interface AuthProps {
   session: Session | null;
@@ -6,11 +8,30 @@ interface AuthProps {
 }
 
 const Auth: React.FC<AuthProps> = ({ session, reloadSession }) => {
+  const [username, setUsername] = useState('');
+  const onSubmit = async () => {
+    try {
+    } catch (error) {
+      console.log('onSubmit create username error', error);
+    }
+  };
   return (
     <>
       {session ? (
-        <div className='h-screen flex justify-center items-center'>
-          <h4>Create a username</h4>
+        <div className='h-screen flex justify-center items-center flex-col space-y-4'>
+          <h4 className='text-gray-500  text-3xl '>Create a username</h4>
+          <input
+            type='text'
+            onChange={(event) => setUsername(event.target.value)}
+            placeholder='Enter a username'
+            className='px-4 py-2 rounded  border max-w-xs w-full focus:outline-none border-gray-200'
+          />
+          <button
+            onClick={onSubmit}
+            className='shadow-md max-w-xs w-full bg-telegram-blue hover:bg-telegram-blue/90 rounded px-4 py-1 text-white font-semibold'
+          >
+            Save
+          </button>
         </div>
       ) : (
         <div>
@@ -25,6 +46,7 @@ const Auth: React.FC<AuthProps> = ({ session, reloadSession }) => {
                 It&apos;s fast and secure.
               </p>
               <button
+                onClick={() => signIn('google')}
                 type='button'
                 className='text-white max-w-xs mt-8 w-full flex items-center justify-center bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center  dark:focus:ring-[#4285F4]/55 mr-2 mb-2'
               >
