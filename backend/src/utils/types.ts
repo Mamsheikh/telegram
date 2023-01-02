@@ -18,3 +18,8 @@ export interface User {
   name: string;
   email: string;
 }
+
+export interface CreateUsernameResponse {
+  success?: boolean;
+  error?: string;
+}

@@ -21,7 +21,9 @@ import typeDefs from './graphql/typeDefs';
 async function main() {
   dotenv.config();
   const app = express();
-  const prisma = new PrismaClient();
+  const prisma = new PrismaClient({
+    log: ['error', 'info', 'query', 'warn'],
+  });
   const httpServer = http.createServer(app);
 
   const schema = makeExecutableSchema({

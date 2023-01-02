@@ -4,6 +4,7 @@ import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { userOperations } from '../../graphql/operations/user';
 import { CreateUsernameData, CreateUsernameVariables } from '../../utils/types';
+import toast from 'react-hot-toast';
 
 interface AuthProps {
   session: Session | null;
@@ -18,17 +19,36 @@ const Auth: React.FC<AuthProps> = ({ session, reloadSession }) => {
   >(userOperations.Mutations.createUsername);
   const onSubmit = async () => {
     if (!username) return;
+
+    const { data } = await createUsername({
+      variables: { username },
+    });
     try {
-      await createUsername({ variables: { username } });
-    } catch (error) {
+      if (!data?.createUsername) {
+        throw new Error();
+      }
+
+      if (data.createUsername.error) {
+        const {
+          createUsername: { error },
+        } = data;
+        throw new Error(error);
+      }
+
+      toast.success('Username successfully created');
+      reloadSession();
+    } catch (error: any) {
       console.log('onSubmit create username error', error);
+      toast.error(error.message);
     }
   };
   return (
     <>
       {session ? (
         <div className='h-screen flex justify-center items-center flex-col space-y-4'>
-          <h4 className='text-gray-500  text-3xl '>Create a username</h4>
+          <h4 className='text-gray-600  text-3xl font-wide mb-4'>
+            Create a username
+          </h4>
           <input
             type='text'
             onChange={(event) => setUsername(event.target.value)}
@@ -37,9 +57,32 @@ const Auth: React.FC<AuthProps> = ({ session, reloadSession }) => {
           />
           <button
             onClick={onSubmit}
-            className='shadow-md max-w-xs w-full bg-telegram-blue hover:bg-telegram-blue/90 rounded px-4 py-1 text-white font-semibold'
+            className='shadow-md max-w-xs w-full flex justify-center items-center bg-telegram-blue hover:bg-telegram-blue/90 rounded px-4 py-1 text-white font-semibold'
           >
-            Save
+            {loading ? (
+              <svg
+                className='animate-spin -ml-1 mr-3 h-5 w-5 text-white'
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+              >
+                <circle
+                  className='opacity-25'
+                  cx='12'
+                  cy='12'
+                  r='10'
+                  stroke='currentColor'
+                  strokeWidth='4'
+                ></circle>
+                <path
+                  className='opacity-75'
+                  fill='currentColor'
+                  d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                ></path>
+              </svg>
+            ) : (
+              <p>Save</p>
+            )}
           </button>
         </div>
       ) : (
