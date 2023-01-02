@@ -1,6 +1,9 @@
+import { useMutation, useQuery } from '@apollo/client';
 import { Session } from 'next-auth';
 import { signIn } from 'next-auth/react';
 import { useState } from 'react';
+import { userOperations } from '../../graphql/operations/user';
+import { CreateUsernameData, CreateUsernameVariables } from '../../utils/types';
 
 interface AuthProps {
   session: Session | null;
@@ -9,8 +12,14 @@ interface AuthProps {
 
 const Auth: React.FC<AuthProps> = ({ session, reloadSession }) => {
   const [username, setUsername] = useState('');
+  const [createUsername, { loading, error }] = useMutation<
+    CreateUsernameData,
+    CreateUsernameVariables
+  >(userOperations.Mutations.createUsername);
   const onSubmit = async () => {
+    if (!username) return;
     try {
+      await createUsername({ variables: { username } });
     } catch (error) {
       console.log('onSubmit create username error', error);
     }
