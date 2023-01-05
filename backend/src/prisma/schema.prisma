@@ -46,50 +46,57 @@ model VerificationToken {
 }
 
 model User {
-  id            String        @id @default(cuid())
+  id            String                   @id @default(cuid())
   name          String?
-  email         String?       @unique
+  email         String?                  @unique
   emailVerified DateTime?
   image         String?
-  username      String?       @unique
+  username      String?                  @unique
   accounts      Account[]
   sessions      Session[]
-  privateChats  PrivateChat[]
-  groups        Group[]
-  channels      Channel[]
+  conversations ConvesationParticipant[]
   messages      Message[]
 }
 
-model Channel {
-  id          String    @id @default(cuid())
-  name        String
-  description String?
-  users       User[]
-  messages    Message[]
+model Conversation {
+  id               String                   @id @default(cuid())
+  conversationType ConversationType
+  channelName      String?
+  groupName        String?
+  conversationImg  String?
+  latestMessageId  String?                  @unique
+  latestMessage    Message?                 @relation(name: "latestConversationMessage", fields: [latestMessageId], references: [id])
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+  participants     ConvesationParticipant[]
+  messages         Message[]
 }
 
-model Group {
-  id       String    @id @default(cuid())
-  name     String
-  users    User[]
-  messages Message[]
-}
-
-model PrivateChat {
-  id       String    @id @default(cuid())
-  users    User[]
-  messages Message[]
+model ConvesationParticipant {
+  id                 String       @id @default(cuid())
+  userId             String
+  user               User         @relation(fields: [userId], references: [id])
+  conversationId     String
+  conversation       Conversation @relation(fields: [conversationId], references: [id])
+  unSeenMessageCount Int
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
 }
 
 model Message {
-  id            String       @id @default(cuid())
-  body          String
-  author        User         @relation(fields: [userId], references: [id])
-  channel       Channel?     @relation(fields: [channelId], references: [id])
-  group         Group?       @relation(fields: [groupId], references: [id])
-  privateChat   PrivateChat? @relation(fields: [privateChatId], references: [id])
-  userId        String
-  channelId     String?
-  groupId       String?
-  privateChatId String?
+  id             String        @id @default(cuid())
+  body           String
+  coversation    Conversation  @relation(fields: [conversationId], references: [id])
+  sender         User          @relation(fields: [senderId], references: [id])
+  conversationId String
+  senderId       String
+  isLatestIn     Conversation? @relation(name: "latestConversationMessage")
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+enum ConversationType {
+  GROUP
+  CHANNEL
+  DM
 }
