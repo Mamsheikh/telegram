@@ -1,6 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useCallback, useRef, useState } from 'react';
 import { AiFillCamera, AiOutlineSearch } from 'react-icons/ai';
+import UserSearchList from './UserSearchList';
 
 type ModalProps = {
   isOpen: boolean;
@@ -21,6 +22,7 @@ const SearchUserModal: React.FC<ModalProps> = ({
   closeModal,
 }) => {
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [image, setImage] = useState('');
   const [count, setCount] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -61,31 +63,36 @@ const SearchUserModal: React.FC<ModalProps> = ({
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className='w-full h-64 max-w-sm transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                  <Dialog.Title
-                    as='h3'
-                    className='text-lg font-medium leading-6 text-gray-900'
-                  >
-                    Add Members{' '}
-                    <span className='text-xs ml-1 text-gray-600'>
-                      {count}/200000
-                    </span>
-                  </Dialog.Title>
-                  <div className='mt-2 flex items-center'>
-                    <div className='flex border-b w-full items-center pb-3'>
+                <Dialog.Panel className='w-full h-[450px] max-w-sm transform overflow-hidden rounded-2xl bg-white  text-left align-middle shadow-xl transition-all'>
+                  <div className='pt-6 mb-4 px-6'>
+                    <Dialog.Title
+                      as='h3'
+                      className='text-lg  font-medium leading-6 text-gray-900'
+                    >
+                      Add Members{' '}
+                      <span className='text-xs ml-1 text-gray-600'>
+                        {count}/200000
+                      </span>
+                    </Dialog.Title>
+                  </div>
+                  <div className=' flex items-center px-6'>
+                    <div className='flex w-full items-center pb-3'>
                       <AiOutlineSearch className='h-6 w-6 text-gray-400' />
                       <input
+                        onChange={(event) => setUsername(event.target.value)}
                         type='text'
                         placeholder='Search'
                         className='focus:outline-none w-full ml-2'
                       />
                     </div>
                   </div>
-                  <div className='mt-4 flex justify-end'>
+                  <hr />
+                  <UserSearchList />
+                  <div className='mt-4 flex justify-end left-0 mb-3 w-full border-t fixed bottom-0 px-4 pt-1'>
                     <button
                       type='button'
                       className='inline-flex justify-center rounded-md border border-transparent hover:bg-blue-100 px-4 py-2 text-sm font-medium text-telegram-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
-                      onClick={closeModal}
+                      onClick={() => setIsOpen(false)}
                     >
                       Cancel
                     </button>
