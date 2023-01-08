@@ -6,6 +6,7 @@ import { useLazyQuery, useQuery } from '@apollo/client';
 import { userOperations } from '../../../graphql/operations/user';
 import { SearchUsersData, SearchUsersVariables } from '../../../utils/types';
 import { useDebounce } from 'use-debounce';
+import UserSearchSkeletonLoader from './UserSearchSkeletonLoader';
 
 type ModalProps = {
   isOpen: boolean;
@@ -31,7 +32,7 @@ const SearchUserModal: React.FC<ModalProps> = ({
   const [image, setImage] = useState('');
   const [count, setCount] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [searchUsers, { data }] = useLazyQuery<
+  const [searchUsers, { data, loading }] = useLazyQuery<
     SearchUsersData,
     SearchUsersVariables
   >(userOperations.Queries.searchUsers);
@@ -116,6 +117,8 @@ const SearchUserModal: React.FC<ModalProps> = ({
                   {data?.searchUsers && (
                     <UserSearchList users={data?.searchUsers} />
                   )}
+                  {true &&
+                    [0, 1].map((i) => <UserSearchSkeletonLoader key={i} />)}
                   <div className='mt-4 flex justify-end left-0 mb-3 w-full border-t fixed bottom-0 px-4 pt-1'>
                     <button
                       type='button'
