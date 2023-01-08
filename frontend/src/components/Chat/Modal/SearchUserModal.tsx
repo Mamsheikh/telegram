@@ -2,6 +2,10 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useCallback, useRef, useState } from 'react';
 import { AiFillCamera, AiOutlineSearch } from 'react-icons/ai';
 import UserSearchList from './UserSearchList';
+import { useLazyQuery, useQuery } from '@apollo/client';
+import { userOperations } from '../../../graphql/operations/user';
+import { SearchUsersData, SearchUsersVariables } from '../../../utils/types';
+import { useDebounce } from 'use-debounce';
 
 type ModalProps = {
   isOpen: boolean;
@@ -21,17 +25,33 @@ const SearchUserModal: React.FC<ModalProps> = ({
   picture,
   closeModal,
 }) => {
-  const [name, setName] = useState('');
+  const [name, setName] = useState<string>();
   const [username, setUsername] = useState('');
+  const [debouncedUsername] = useDebounce(username, 3000);
   const [image, setImage] = useState('');
   const [count, setCount] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [searchUsers, { data }] = useLazyQuery<
+    SearchUsersData,
+    SearchUsersVariables
+  >(userOperations.Queries.searchUsers);
+  console.log(data?.searchUsers);
 
   const handleClick = useCallback(() => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   }, []);
+
+  const onSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!username) return;
+    await searchUsers({
+      variables: {
+        username,
+      },
+    });
+  };
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -75,7 +95,7 @@ const SearchUserModal: React.FC<ModalProps> = ({
                       </span>
                     </Dialog.Title>
                   </div>
-                  <div className=' flex items-center px-6'>
+                  <form onSubmit={onSubmit} className=' flex items-center px-6'>
                     <div className='flex w-full items-center pb-3'>
                       <AiOutlineSearch className='h-6 w-6 text-gray-400' />
                       <input
@@ -85,9 +105,17 @@ const SearchUserModal: React.FC<ModalProps> = ({
                         className='focus:outline-none w-full ml-2'
                       />
                     </div>
-                  </div>
+                    <button
+                      type='submit'
+                      className='inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-telegram-blue  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
+                    >
+                      Search
+                    </button>
+                  </form>
                   <hr />
-                  <UserSearchList />
+                  {data?.searchUsers && (
+                    <UserSearchList users={data?.searchUsers} />
+                  )}
                   <div className='mt-4 flex justify-end left-0 mb-3 w-full border-t fixed bottom-0 px-4 pt-1'>
                     <button
                       type='button'
