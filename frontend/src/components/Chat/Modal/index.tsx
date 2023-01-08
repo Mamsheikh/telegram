@@ -20,7 +20,9 @@ const Modal: React.FC<ModalProps> = ({
   picture,
   closeModal,
 }) => {
-  const [name, setName] = useState('');
+  const [username, setUserame] = useState<string>();
+  const [name, setName] = useState<string>();
+  const [err, setErr] = useState(false);
   const [image, setImage] = useState('');
   const [open, setOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -30,6 +32,14 @@ const Modal: React.FC<ModalProps> = ({
       fileInputRef.current.click();
     }
   }, []);
+
+  const onNext = () => {
+    if (!name) {
+      setErr(true);
+      return;
+    }
+    setOpen(true);
+  };
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -74,13 +84,23 @@ const Modal: React.FC<ModalProps> = ({
                       </div>
                     </div>
                     <div className='flex-col flex w-2/3'>
-                      <label htmlFor='' className='text-telegram-blue text-sm'>
+                      <label
+                        htmlFor=''
+                        className={`${
+                          err ? 'text-red-500' : 'text-telegram-blue'
+                        } text-sm`}
+                      >
                         Group name
                       </label>
                       <input
                         type='text'
-                        onChange={(event) => setName(event.target.value)}
-                        className='focus:outline-none  border-b-2 border-telegram-blue'
+                        onChange={(event) => {
+                          setErr(false);
+                          setName(event.target.value);
+                        }}
+                        className={`focus:outline-none  border-b-2 ${
+                          err ? `border-red-500` : `border-telegram-blue`
+                        }`}
                       />
                     </div>
                   </div>
@@ -95,13 +115,19 @@ const Modal: React.FC<ModalProps> = ({
                     </button>
                     <button
                       type='button'
+                      // disabled={!username}
                       className='inline-flex justify-center rounded-md border border-transparent hover:bg-blue-100 px-4 py-2 text-sm font-medium text-telegram-blue  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
-                      onClick={() => setOpen(true)}
+                      onClick={onNext}
                     >
                       Next
                     </button>
                     {open && (
-                      <SearchUserModal isOpen={open} setIsOpen={setOpen} />
+                      <SearchUserModal
+                        isOpen={open}
+                        setIsOpen={setOpen}
+                        username={username}
+                        setUsername={setUserame}
+                      />
                     )}
                   </div>
                 </Dialog.Panel>

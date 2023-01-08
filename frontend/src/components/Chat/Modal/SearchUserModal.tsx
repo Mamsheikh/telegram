@@ -13,21 +13,21 @@ type ModalProps = {
   setIsOpen: (isOpen: boolean) => void;
   openModal?: () => void;
   closeModal?: () => void;
-  channelName?: string;
-  groupName?: string;
+  username?: string;
+  setUsername: (username: string) => void;
   picture?: string;
 };
 
 const SearchUserModal: React.FC<ModalProps> = ({
   isOpen,
-  channelName,
+  username,
   setIsOpen,
-  groupName,
+  setUsername,
   picture,
   closeModal,
 }) => {
   const [name, setName] = useState<string>();
-  const [username, setUsername] = useState('');
+  //   const [username, setUsername] = useState('');
   const [debouncedUsername] = useDebounce(username, 3000);
   const [image, setImage] = useState('');
   const [count, setCount] = useState(1);
@@ -117,7 +117,7 @@ const SearchUserModal: React.FC<ModalProps> = ({
                   {data?.searchUsers && (
                     <UserSearchList users={data?.searchUsers} />
                   )}
-                  {true &&
+                  {loading &&
                     [0, 1].map((i) => <UserSearchSkeletonLoader key={i} />)}
                   <div className='mt-4 flex justify-end left-0 mb-3 w-full border-t fixed bottom-0 px-4 pt-1'>
                     <button
