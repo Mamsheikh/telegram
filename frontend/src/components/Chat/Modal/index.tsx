@@ -1,5 +1,5 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, useCallback, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useRef, useState } from 'react';
 import { AiFillCamera } from 'react-icons/ai';
 import SearchUserModal from './SearchUserModal';
 
@@ -24,6 +24,7 @@ const Modal: React.FC<ModalProps> = ({
   const [name, setName] = useState<string>();
   const [err, setErr] = useState(false);
   const [image, setImage] = useState('');
+  const [file, setFile] = useState<File>();
   const [open, setOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -39,6 +40,18 @@ const Modal: React.FC<ModalProps> = ({
       return;
     }
     setOpen(true);
+  };
+
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event?.target?.files?.[0]) {
+      const file = event.target.files[0];
+      setFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
   return (
     <>
@@ -72,16 +85,28 @@ const Modal: React.FC<ModalProps> = ({
                     <div className='w-1/3 flex items-center justify-center'>
                       <div
                         onClick={handleClick}
-                        className='cursor-pointer h-20 w-20 rounded-full bg-telegram-blue flex items-center justify-center'
+                        className={`cursor-pointer h-20 w-20 rounded-full ${
+                          image ? '' : 'bg-telegram-blue'
+                        }  flex items-center justify-center`}
                       >
-                        <AiFillCamera className='text-white h-10 w-10' />
-                        <input
-                          type='file'
-                          ref={fileInputRef}
-                          accept='image/*'
-                          style={{ display: 'none' }}
-                        />
+                        {/* <AiFillCamera className='text-white h-10 w-10' /> */}
+                        {image ? (
+                          <img
+                            src={image}
+                            alt='preview'
+                            className='h-20 w-20 rounded-full'
+                          />
+                        ) : (
+                          <AiFillCamera className='text-white h1- w-10' />
+                        )}
                       </div>
+                      <input
+                        type='file'
+                        ref={fileInputRef}
+                        onChange={onChange}
+                        accept='image/*'
+                        style={{ display: 'none' }}
+                      />
                     </div>
                     <div className='flex-col flex w-2/3'>
                       <label
