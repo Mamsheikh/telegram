@@ -63,7 +63,7 @@ const SearchUserModal: React.FC<ModalProps> = ({
     for (let i = 0; i < participantsId.length; i++) {
       const element = participantsId[i];
       if (user.id === element) {
-        // setParticipants((prev) => prev.filter((p) => p.id !== element));
+        removeParticipant(user.id);
         return;
       }
     }
@@ -137,21 +137,22 @@ const SearchUserModal: React.FC<ModalProps> = ({
                           removeParticipants={removeParticipant}
                         />
                       )}
-                      <input
-                        value={username}
-                        onChange={(event) => setUsername(event.target.value)}
-                        type='text'
-                        placeholder={`${
-                          participants.length !== 0 ? '' : 'Search'
-                        }`}
-                        className='focus:outline-none w-full ml-2'
-                      />
-                      <button
-                        type='submit'
-                        className='inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-telegram-blue  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
-                      >
-                        Search
-                      </button>
+                      <div className='flex items-end'>
+                        <input
+                          value={username}
+                          onChange={(event) => setUsername(event.target.value)}
+                          type='text'
+                          placeholder={` Search
+                          `}
+                          className='focus:outline-none w-full ml-2 mb-2'
+                        />
+                        <button
+                          type='submit'
+                          className='inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-telegram-blue  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
+                        >
+                          Search
+                        </button>
+                      </div>
                     </div>
                   </form>
                   <hr />

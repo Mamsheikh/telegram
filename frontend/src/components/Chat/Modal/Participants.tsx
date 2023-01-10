@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { AiOutlineClose } from 'react-icons/ai';
+import { IoMdCloseCircle } from 'react-icons/io';
 import { User } from '../../../utils/types';
 import { useState } from 'react';
 
@@ -22,8 +22,6 @@ const Participants: React.FC<ParticipantsProps> = ({
           <div
             key={participant.id}
             className='flex items-center relative bg-gray-100 rounded-full'
-            onMouseEnter={() => setIsShown(true)}
-            onMouseLeave={() => setIsShown(false)}
           >
             {/* {!isShown ? ( */}
             <img
@@ -38,7 +36,8 @@ const Participants: React.FC<ParticipantsProps> = ({
             // )} */}
             <div className='flex items-center bg-gray-100 rounded-r-full p-1 ml-6'>
               <h6 className='text-xs text-ellipsis'>{participant.username}</h6>
-              <AiOutlineClose
+              <IoMdCloseCircle
+                className='ml-2 text-red-500 cursor-pointer'
                 onClick={() => removeParticipants(participant.id)}
               />
             </div>
