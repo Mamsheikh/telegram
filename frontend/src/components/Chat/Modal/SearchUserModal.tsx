@@ -4,9 +4,14 @@ import { AiFillCamera, AiOutlineSearch } from 'react-icons/ai';
 import UserSearchList from './UserSearchList';
 import { useLazyQuery, useQuery } from '@apollo/client';
 import { userOperations } from '../../../graphql/operations/user';
-import { SearchUsersData, SearchUsersVariables } from '../../../utils/types';
+import {
+  SearchUsersData,
+  SearchUsersVariables,
+  User,
+} from '../../../utils/types';
 import { useDebounce } from 'use-debounce';
 import UserSearchSkeletonLoader from './UserSearchSkeletonLoader';
+import Participants from './Participants';
 
 type ModalProps = {
   isOpen: boolean;
@@ -26,8 +31,7 @@ const SearchUserModal: React.FC<ModalProps> = ({
   picture,
   closeModal,
 }) => {
-  const [name, setName] = useState<string>();
-  //   const [username, setUsername] = useState('');
+  const [participants, setParticipants] = useState<User[]>([]);
   const [debouncedUsername] = useDebounce(username, 3000);
   const [image, setImage] = useState('');
   const [count, setCount] = useState(1);
@@ -36,7 +40,7 @@ const SearchUserModal: React.FC<ModalProps> = ({
     SearchUsersData,
     SearchUsersVariables
   >(userOperations.Queries.searchUsers);
-  console.log(data?.searchUsers);
+  console.log(participants);
 
   const handleClick = useCallback(() => {
     if (fileInputRef.current) {
@@ -52,6 +56,23 @@ const SearchUserModal: React.FC<ModalProps> = ({
         username,
       },
     });
+  };
+
+  const addParticipant = (user: User) => {
+    const participantsId = participants.map((p) => p.id);
+    for (let i = 0; i < participantsId.length; i++) {
+      const element = participantsId[i];
+      if (user.id === element) {
+        // setParticipants((prev) => prev.filter((p) => p.id !== element));
+        return;
+      }
+    }
+    setParticipants((prev) => [...prev, user]);
+    setUsername('');
+  };
+
+  const removeParticipant = (userId: string) => {
+    setParticipants((prev) => prev.filter((p) => p.id !== userId));
   };
   return (
     <>
@@ -92,30 +113,54 @@ const SearchUserModal: React.FC<ModalProps> = ({
                     >
                       Add Members{' '}
                       <span className='text-xs ml-1 text-gray-600'>
-                        {count}/200000
+                        {participants.length + 1}/200000
                       </span>
                     </Dialog.Title>
                   </div>
-                  <form onSubmit={onSubmit} className=' flex items-center px-6'>
-                    <div className='flex w-full items-center pb-3'>
-                      <AiOutlineSearch className='h-6 w-6 text-gray-400' />
+                  <form
+                    onSubmit={onSubmit}
+                    className=' max-h-32 flex items-start overflow-y-auto px-6'
+                  >
+                    <div
+                      className={`${
+                        participants.length === 0
+                          ? 'flex items-center w-full'
+                          : 'pb-3'
+                      }`}
+                    >
+                      {participants.length === 0 && (
+                        <AiOutlineSearch className='h-6 w-6 text-gray-400' />
+                      )}
+                      {participants && (
+                        <Participants
+                          participants={participants}
+                          removeParticipants={removeParticipant}
+                        />
+                      )}
                       <input
+                        value={username}
                         onChange={(event) => setUsername(event.target.value)}
                         type='text'
-                        placeholder='Search'
+                        placeholder={`${
+                          participants.length !== 0 ? '' : 'Search'
+                        }`}
                         className='focus:outline-none w-full ml-2'
                       />
+                      <button
+                        type='submit'
+                        className='inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-telegram-blue  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
+                      >
+                        Search
+                      </button>
                     </div>
-                    <button
-                      type='submit'
-                      className='inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-telegram-blue  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
-                    >
-                      Search
-                    </button>
                   </form>
                   <hr />
                   {data?.searchUsers && (
-                    <UserSearchList users={data?.searchUsers} />
+                    <UserSearchList
+                      users={data?.searchUsers}
+                      addParticipant={addParticipant}
+                      participants={participants}
+                    />
                   )}
                   {loading &&
                     [0, 1].map((i) => <UserSearchSkeletonLoader key={i} />)}
