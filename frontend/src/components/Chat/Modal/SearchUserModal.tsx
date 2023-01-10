@@ -142,8 +142,7 @@ const SearchUserModal: React.FC<ModalProps> = ({
                           value={username}
                           onChange={(event) => setUsername(event.target.value)}
                           type='text'
-                          placeholder={` Search
-                          `}
+                          placeholder='Search'
                           className='focus:outline-none w-full ml-2 mb-2'
                         />
                         <button
