@@ -19,6 +19,7 @@ import toast from 'react-hot-toast';
 import { conversationOperations } from '../../../graphql/operations/conversation';
 import { Session } from 'next-auth';
 import { useRouter } from 'next/router';
+import { uploadImage } from '../../../utils/functions';
 
 type ModalProps = {
   session: Session;
@@ -30,6 +31,7 @@ type ModalProps = {
   setUsername: (username: string) => void;
   conversationName?: string;
   conversationImg: string;
+  file: File | undefined;
 };
 
 const SearchUserModal: React.FC<ModalProps> = ({
@@ -41,6 +43,7 @@ const SearchUserModal: React.FC<ModalProps> = ({
   conversationName,
   conversationImg,
   closeModal,
+  file,
 }) => {
   const [participants, setParticipants] = useState<User[]>([]);
   const { id: userId } = session.user;
@@ -90,11 +93,12 @@ const SearchUserModal: React.FC<ModalProps> = ({
   const onCreateConversation = async () => {
     const participantIds = [userId, ...participants.map((p) => p.id)];
     try {
+      const { secure_url } = await uploadImage(file as File);
       const { data } = await createConversation({
         variables: {
           participantIds,
           conversationName,
-          conversationImg,
+          conversationImg: secure_url,
           conversationType: ConversationType.GROUP,
         },
       });

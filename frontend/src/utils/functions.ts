@@ -1,4 +1,6 @@
-export const uploadImage = async (file: File) => {
+export const uploadImage = async (
+  file: File
+): Promise<{ secure_url: string }> => {
   const formData = new FormData();
   formData.append('file', file);
 
@@ -12,5 +14,5 @@ export const uploadImage = async (file: File) => {
 
   const data = await res.json();
 
-  return { public_id: data.public_id, url: data.secure_url };
+  return { secure_url: data.secure_url };
 };

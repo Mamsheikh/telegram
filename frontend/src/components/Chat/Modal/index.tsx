@@ -151,6 +151,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, session, closeModal }) => {
                         setUsername={setUserame}
                         conversationName={conversationName}
                         conversationImg={conversationImg}
+                        file={file}
                       />
                     )}
                   </div>
