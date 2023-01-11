@@ -23,3 +23,16 @@ export interface CreateUsernameResponse {
   success?: boolean;
   error?: string;
 }
+
+export interface CreateConversationInput {
+  participantIds: Array<string>;
+  conversationType: ConversationType;
+  conversationName: string;
+  conversationImg: string;
+}
+
+export enum ConversationType {
+  DM = 'DM',
+  CHANNEL = 'CHANNEL',
+  GROUP = 'GROUP',
+}

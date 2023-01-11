@@ -5,6 +5,7 @@ import UserSearchList from './UserSearchList';
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { userOperations } from '../../../graphql/operations/user';
 import {
+  ConversationType,
   CreateConversationData,
   CreateConversationVariables,
   SearchUsersData,
@@ -17,16 +18,18 @@ import Participants from './Participants';
 import toast from 'react-hot-toast';
 import { conversationOperations } from '../../../graphql/operations/conversation';
 import { Session } from 'next-auth';
+import { useRouter } from 'next/router';
 
 type ModalProps = {
   session: Session;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   openModal?: () => void;
-  closeModal?: () => void;
+  closeModal: () => void;
   username?: string;
   setUsername: (username: string) => void;
-  picture?: string;
+  conversationName?: string;
+  conversationImg: string;
 };
 
 const SearchUserModal: React.FC<ModalProps> = ({
@@ -35,16 +38,15 @@ const SearchUserModal: React.FC<ModalProps> = ({
   username,
   setIsOpen,
   setUsername,
-  picture,
+  conversationName,
+  conversationImg,
   closeModal,
 }) => {
   const [participants, setParticipants] = useState<User[]>([]);
-  const [debouncedUsername] = useDebounce(username, 3000);
-  const [image, setImage] = useState('');
-  const [count, setCount] = useState(1);
   const { id: userId } = session.user;
+  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [searchUsers, { data, loading }] = useLazyQuery<
+  const [searchUsers, { data, loading, error }] = useLazyQuery<
     SearchUsersData,
     SearchUsersVariables
   >(userOperations.Queries.searchUsers);
@@ -91,8 +93,26 @@ const SearchUserModal: React.FC<ModalProps> = ({
       const { data } = await createConversation({
         variables: {
           participantIds,
+          conversationName,
+          conversationImg,
+          conversationType: ConversationType.GROUP,
         },
       });
+
+      if (!data?.createConversation) {
+        throw new Error('failed to create conversation');
+      }
+
+      const { conversationId } = data.createConversation;
+
+      router.push({ query: { conversationId } });
+
+      /**
+       * Clear state and close modal on successfull conversation created
+       */
+      setParticipants([]);
+      setUsername('');
+      closeModal();
     } catch (error: any) {
       console.log('onCreateConverstion error', error);
       toast.error(error.message);

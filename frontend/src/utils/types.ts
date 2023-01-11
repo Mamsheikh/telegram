@@ -37,4 +37,13 @@ export interface CreateConversationData {
 
 export interface CreateConversationVariables {
   participantIds: Array<string>;
+  conversationName?: string;
+  conversationImg?: string;
+  conversationType: ConversationType;
+}
+
+export enum ConversationType {
+  DM = 'DM',
+  CHANNEL = 'CHANNEL',
+  GROUP = 'GROUP',
 }

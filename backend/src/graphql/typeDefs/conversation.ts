@@ -2,11 +2,22 @@ import { gql } from 'graphql-tag';
 
 const typeDefs = gql`
   type Mutation {
-    createConversation(participantIds: [String]): CreateConversationResponse
+    createConversation(
+      conversationName: String
+      conversationImg: String
+      conversationType: ConversationType
+      participantIds: [String]
+    ): CreateConversationResponse
   }
 
   type CreateConversationResponse {
     conversationId: String
+  }
+
+  enum ConversationType {
+    DM
+    GROUP
+    CHANNEL
   }
 `;
 

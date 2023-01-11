@@ -11,16 +11,13 @@ type ModalProps = {
   setIsOpen: (isOpen: boolean) => void;
   openModal: () => void;
   closeModal: () => void;
-  channelName?: string;
-  groupName?: string;
-  picture?: string;
 };
 
 const Modal: React.FC<ModalProps> = ({ isOpen, session, closeModal }) => {
   const [username, setUserame] = useState<string>();
-  const [name, setName] = useState<string>();
+  const [conversationName, setConversationName] = useState<string>();
   const [err, setErr] = useState(false);
-  const [image, setImage] = useState('');
+  const [conversationImg, setConversationImg] = useState('');
   const [file, setFile] = useState<File>();
   const [open, setOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -32,7 +29,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, session, closeModal }) => {
   }, []);
 
   const onNext = () => {
-    if (!name) {
+    if (!conversationName) {
       setErr(true);
       return;
     }
@@ -45,7 +42,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, session, closeModal }) => {
       setFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImage(reader.result as string);
+        setConversationImg(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -84,18 +81,18 @@ const Modal: React.FC<ModalProps> = ({ isOpen, session, closeModal }) => {
                       <div
                         onClick={handleClick}
                         className={`cursor-pointer h-20 w-20 rounded-full ${
-                          image ? '' : 'bg-telegram-blue'
+                          conversationImg ? '' : 'bg-telegram-blue'
                         }  flex items-center justify-center`}
                       >
                         {/* <AiFillCamera className='text-white h-10 w-10' /> */}
-                        {image ? (
+                        {conversationImg ? (
                           <img
-                            src={image}
+                            src={conversationImg}
                             alt='preview'
                             className='h-20 w-20 rounded-full'
                           />
                         ) : (
-                          <AiFillCamera className='text-white h1- w-10' />
+                          <AiFillCamera className='text-white h-10 w-10' />
                         )}
                       </div>
                       <input
@@ -119,7 +116,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, session, closeModal }) => {
                         type='text'
                         onChange={(event) => {
                           setErr(false);
-                          setName(event.target.value);
+                          setConversationName(event.target.value);
                         }}
                         className={`focus:outline-none  border-b-2 ${
                           err ? `border-red-500` : `border-telegram-blue`
@@ -149,8 +146,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, session, closeModal }) => {
                         session={session}
                         isOpen={open}
                         setIsOpen={setOpen}
+                        closeModal={closeModal}
                         username={username}
                         setUsername={setUserame}
+                        conversationName={conversationName}
+                        conversationImg={conversationImg}
                       />
                     )}
                   </div>

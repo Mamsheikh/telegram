@@ -61,8 +61,7 @@ model User {
 model Conversation {
   id               String                   @id @default(cuid())
   conversationType ConversationType
-  channelName      String?
-  groupName        String?
+  conversationName String?
   conversationImg  String?
   latestMessageId  String?                  @unique
   latestMessage    Message?                 @relation(name: "latestConversationMessage", fields: [latestMessageId], references: [id])
