@@ -1,9 +1,12 @@
+/* eslint-disable @next/next/no-img-element */
 import { Dialog, Transition } from '@headlessui/react';
 import React, { Fragment, useCallback, useRef, useState } from 'react';
 import { AiFillCamera } from 'react-icons/ai';
 import SearchUserModal from './SearchUserModal';
+import { Session } from 'next-auth';
 
 type ModalProps = {
+  session: Session;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   openModal: () => void;
@@ -13,13 +16,7 @@ type ModalProps = {
   picture?: string;
 };
 
-const Modal: React.FC<ModalProps> = ({
-  isOpen,
-  channelName,
-  groupName,
-  picture,
-  closeModal,
-}) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, session, closeModal }) => {
   const [username, setUserame] = useState<string>();
   const [name, setName] = useState<string>();
   const [err, setErr] = useState(false);
@@ -53,6 +50,7 @@ const Modal: React.FC<ModalProps> = ({
       reader.readAsDataURL(file);
     }
   };
+
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -148,6 +146,7 @@ const Modal: React.FC<ModalProps> = ({
                     </button>
                     {open && (
                       <SearchUserModal
+                        session={session}
                         isOpen={open}
                         setIsOpen={setOpen}
                         username={username}

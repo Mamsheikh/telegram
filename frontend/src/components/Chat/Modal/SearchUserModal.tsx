@@ -2,9 +2,11 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useCallback, useRef, useState } from 'react';
 import { AiFillCamera, AiOutlineSearch } from 'react-icons/ai';
 import UserSearchList from './UserSearchList';
-import { useLazyQuery, useQuery } from '@apollo/client';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { userOperations } from '../../../graphql/operations/user';
 import {
+  CreateConversationData,
+  CreateConversationVariables,
   SearchUsersData,
   SearchUsersVariables,
   User,
@@ -12,8 +14,12 @@ import {
 import { useDebounce } from 'use-debounce';
 import UserSearchSkeletonLoader from './UserSearchSkeletonLoader';
 import Participants from './Participants';
+import toast from 'react-hot-toast';
+import { conversationOperations } from '../../../graphql/operations/conversation';
+import { Session } from 'next-auth';
 
 type ModalProps = {
+  session: Session;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   openModal?: () => void;
@@ -24,6 +30,7 @@ type ModalProps = {
 };
 
 const SearchUserModal: React.FC<ModalProps> = ({
+  session,
   isOpen,
   username,
   setIsOpen,
@@ -35,12 +42,16 @@ const SearchUserModal: React.FC<ModalProps> = ({
   const [debouncedUsername] = useDebounce(username, 3000);
   const [image, setImage] = useState('');
   const [count, setCount] = useState(1);
+  const { id: userId } = session.user;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [searchUsers, { data, loading }] = useLazyQuery<
     SearchUsersData,
     SearchUsersVariables
   >(userOperations.Queries.searchUsers);
-  console.log(participants);
+  const [createConversation, { loading: createConversationLoading }] =
+    useMutation<CreateConversationData, CreateConversationVariables>(
+      conversationOperations.Mutations.createConversation
+    );
 
   const handleClick = useCallback(() => {
     if (fileInputRef.current) {
@@ -73,6 +84,19 @@ const SearchUserModal: React.FC<ModalProps> = ({
 
   const removeParticipant = (userId: string) => {
     setParticipants((prev) => prev.filter((p) => p.id !== userId));
+  };
+  const onCreateConversation = async () => {
+    const participantIds = [userId, ...participants.map((p) => p.id)];
+    try {
+      const { data } = await createConversation({
+        variables: {
+          participantIds,
+        },
+      });
+    } catch (error: any) {
+      console.log('onCreateConverstion error', error);
+      toast.error(error.message);
+    }
   };
   return (
     <>
@@ -175,7 +199,7 @@ const SearchUserModal: React.FC<ModalProps> = ({
                     <button
                       type='button'
                       className='inline-flex justify-center rounded-md border border-transparent hover:bg-blue-100 px-4 py-2 text-sm font-medium text-telegram-blue  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
-                      //   onClick={() => setOpen(true)}
+                      onClick={onCreateConversation}
                     >
                       Create
                     </button>

@@ -24,3 +24,17 @@ export interface SearchUsersData {
 export interface SearchUsersVariables {
   username: string;
 }
+
+/**
+ * Conversations
+ */
+
+export interface CreateConversationData {
+  createConversation: {
+    conversationId: string;
+  };
+}
+
+export interface CreateConversationVariables {
+  participantIds: Array<string>;
+}

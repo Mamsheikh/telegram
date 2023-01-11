@@ -3,12 +3,15 @@ import ConversationList from './ConversationList';
 import MenuBar from './MenuBar';
 import Modal from '../Modal';
 import ChannelModal from '../Modal/ChannelModal';
+import { Session } from 'next-auth';
 
 interface ConversationWrapperProps {
+  session: Session;
   show: boolean;
   setShow: (show: boolean) => void;
 }
 const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
+  session,
   show,
   setShow,
 }) => {
@@ -47,6 +50,7 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
       )}
       {isOpen && (
         <Modal
+          session={session}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           openModal={openModal}
