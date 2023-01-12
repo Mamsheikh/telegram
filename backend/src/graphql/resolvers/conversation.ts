@@ -7,6 +7,37 @@ import {
 import { Prisma } from '@prisma/client';
 
 const resolvers = {
+  Query: {
+    conversations: async (_: any, __: any, context: GraphQLContext) => {
+      const { session, prisma } = context;
+      if (!session?.user) {
+        throw new GraphQLError('Not authorized');
+      }
+
+      const {
+        user: { id: userId },
+      } = session;
+
+      try {
+        const conversations = await prisma.conversation.findMany({
+          where: {
+            participants: {
+              some: {
+                userId: {
+                  equals: userId,
+                },
+              },
+            },
+          },
+          include: conversationPopulated,
+        });
+        return conversations;
+      } catch (error: any) {
+        console.log('conversations error', error);
+        throw new GraphQLError(error.message);
+      }
+    },
+  },
   Mutation: {
     createConversation: async (
       _: any,

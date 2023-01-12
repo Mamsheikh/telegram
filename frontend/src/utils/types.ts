@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client';
+
 /**
  * User
  */
@@ -47,3 +49,41 @@ export enum ConversationType {
   CHANNEL = 'CHANNEL',
   GROUP = 'GROUP',
 }
+
+export interface ConversationsData {
+  conversations: Array<ConversationPopulated>;
+}
+
+export const conversationPopulated =
+  Prisma.validator<Prisma.ConversationInclude>()({
+    participants: {
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            image: true,
+          },
+        },
+      },
+    },
+    latestMessage: {
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            image: true,
+          },
+        },
+      },
+    },
+  });
+
+export type ConversationPopulated = Prisma.ConversationGetPayload<{
+  include: typeof conversationPopulated;
+}>;
+
+// export type ParticipantPopulated = Prisma.ConversationParticipantGetPayload<{
+//   include: typeof participatsPopulated;
+// }>;

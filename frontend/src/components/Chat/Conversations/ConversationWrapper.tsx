@@ -4,6 +4,9 @@ import MenuBar from './MenuBar';
 import Modal from '../Modal';
 import ChannelModal from '../Modal/ChannelModal';
 import { Session } from 'next-auth';
+import { useQuery } from '@apollo/client';
+import { conversationOperations } from '../../../graphql/operations/conversation';
+import { ConversationsData } from '../../../utils/types';
 
 interface ConversationWrapperProps {
   session: Session;
@@ -17,6 +20,10 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [channelIsOpen, setChannelIsOpen] = useState(false);
+  const { data } = useQuery<ConversationsData>(
+    conversationOperations.Queries.conversations
+  );
+  console.log('data', data);
 
   const openModal = () => {
     setIsOpen(true);

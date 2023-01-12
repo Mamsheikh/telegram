@@ -1,6 +1,31 @@
 import { gql } from '@apollo/client';
 
+const ConversationFields = `
+  conversations {
+    id
+      participants {
+        id
+        user {
+          image
+          username
+        }
+      }
+    updatedAt
+    createdAt
+    conversationImg
+    conversationName
+    conversationType
+}
+`;
+
 export const conversationOperations = {
+  Queries: {
+    conversations: gql`
+      query Conversations {
+        ${ConversationFields}
+      }
+    `,
+  },
   Mutations: {
     createConversation: gql`
       mutation CreateConversation(
