@@ -4,6 +4,7 @@ import React, { Fragment, useCallback, useRef, useState } from 'react';
 import { AiFillCamera } from 'react-icons/ai';
 import SearchUserModal from './SearchUserModal';
 import { Session } from 'next-auth';
+import { ConversationType } from '../../../utils/types';
 
 type ModalProps = {
   session: Session;
@@ -16,6 +17,7 @@ type ModalProps = {
 const Modal: React.FC<ModalProps> = ({ isOpen, session, closeModal }) => {
   const [username, setUserame] = useState<string>();
   const [conversationName, setConversationName] = useState<string>();
+  const [conversationType, setConversationType] = useState<ConversationType>();
   const [err, setErr] = useState(false);
   const [conversationImg, setConversationImg] = useState('');
   const [file, setFile] = useState<File>();
@@ -150,7 +152,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, session, closeModal }) => {
                         username={username}
                         setUsername={setUserame}
                         conversationName={conversationName}
-                        conversationImg={conversationImg}
+                        conversationType={ConversationType.GROUP}
                         file={file}
                       />
                     )}

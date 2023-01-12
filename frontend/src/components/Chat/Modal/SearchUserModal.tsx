@@ -12,7 +12,6 @@ import {
   SearchUsersVariables,
   User,
 } from '../../../utils/types';
-import { useDebounce } from 'use-debounce';
 import UserSearchSkeletonLoader from './UserSearchSkeletonLoader';
 import Participants from './Participants';
 import toast from 'react-hot-toast';
@@ -30,7 +29,7 @@ type ModalProps = {
   username?: string;
   setUsername: (username: string) => void;
   conversationName?: string;
-  conversationImg: string;
+  conversationType: ConversationType;
   file: File | undefined;
 };
 
@@ -41,14 +40,13 @@ const SearchUserModal: React.FC<ModalProps> = ({
   setIsOpen,
   setUsername,
   conversationName,
-  conversationImg,
+  conversationType,
   closeModal,
   file,
 }) => {
   const [participants, setParticipants] = useState<User[]>([]);
   const { id: userId } = session.user;
   const router = useRouter();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [searchUsers, { data, loading, error }] = useLazyQuery<
     SearchUsersData,
     SearchUsersVariables
@@ -57,12 +55,6 @@ const SearchUserModal: React.FC<ModalProps> = ({
     useMutation<CreateConversationData, CreateConversationVariables>(
       conversationOperations.Mutations.createConversation
     );
-
-  const handleClick = useCallback(() => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  }, []);
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -99,7 +91,7 @@ const SearchUserModal: React.FC<ModalProps> = ({
           participantIds,
           conversationName,
           conversationImg: secure_url,
-          conversationType: ConversationType.GROUP,
+          conversationType: conversationType,
         },
       });
 

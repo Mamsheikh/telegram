@@ -59,6 +59,7 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
       )}
       {channelIsOpen && (
         <ChannelModal
+          session={session}
           isOpen={channelIsOpen}
           setIsOpen={setChannelIsOpen}
           openModal={openChannelModal}
