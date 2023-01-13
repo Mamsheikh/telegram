@@ -50,8 +50,21 @@ export enum ConversationType {
   GROUP = 'GROUP',
 }
 
+export interface Conversation {
+  id: string;
+  conversationImg?: string;
+  conversationName: string;
+  conversationType: ConversationType;
+  participants: Participant[];
+  createdAt: string;
+}
+
+export interface Participant {
+  id: string;
+  user: User;
+}
 export interface ConversationsData {
-  conversations: Array<ConversationPopulated>;
+  conversations: Array<Conversation>;
 }
 
 export const conversationPopulated =

@@ -73,7 +73,12 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
           closeModal={closeChannelModal}
         />
       )}
-      <ConversationList setShow={setShow} />
+      {data?.conversations && (
+        <ConversationList
+          setShow={setShow}
+          conversations={data?.conversations}
+        />
+      )}
     </div>
   );
 };
