@@ -1,10 +1,17 @@
 import { PrismaClient } from '@prisma/client';
 import { ISODateString } from 'next-auth';
-
+import { PubSub } from 'graphql-subscriptions';
+import { Context } from 'graphql-ws/lib/server';
 export interface GraphQLContext {
   session: Session | null;
   prisma: PrismaClient;
-  //   pubsub: PubSub;
+  pubsub: PubSub;
+}
+
+export interface SubscriptionContext extends Context {
+  connectionParams: {
+    session?: Session;
+  };
 }
 
 export interface Session {

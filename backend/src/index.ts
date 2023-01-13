@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { GraphQLContext, Session } from './utils/types';
+import { GraphQLContext, Session, SubscriptionContext } from './utils/types';
 import { getSession } from 'next-auth/react';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { ApolloServer } from '@apollo/server';
@@ -9,8 +9,11 @@ import http from 'http';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import { json } from 'body-parser';
+import { PubSub } from 'graphql-subscriptions';
+import { createServer } from 'http';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { startStandaloneServer } from '@apollo/server/standalone';
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
 import resolvers from './graphql/resolvers';
 import typeDefs from './graphql/typeDefs';
 
@@ -21,6 +24,7 @@ import typeDefs from './graphql/typeDefs';
 async function main() {
   dotenv.config();
   const app = express();
+  const pubsub = new PubSub();
   const prisma = new PrismaClient({
     log: ['error', 'info', 'query', 'warn'],
   });
@@ -31,13 +35,46 @@ async function main() {
     resolvers,
   });
 
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: '/graphql/subscriptions',
+  });
+
+  // Save the returned server's info so we can shutdown this server later
+  const serverCleanup = useServer(
+    {
+      schema,
+      context: async (ctx: SubscriptionContext): Promise<GraphQLContext> => {
+        if (ctx.connectionParams && ctx.connectionParams.session) {
+          const { session } = ctx.connectionParams;
+
+          return { session, prisma, pubsub };
+        }
+
+        return { session: null, prisma, pubsub };
+      },
+    },
+    wsServer
+  );
+
   const server = new ApolloServer({
     schema,
     csrfPrevention: true,
     cache: 'bounded',
     plugins: [
+      // Proper shutdown for the HTTP server.
       ApolloServerPluginDrainHttpServer({ httpServer }),
-      //   ApolloServerPluginLandingPageLocalDefault({ embed: true }),
+
+      // Proper shutdown for the WebSocket server.
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await serverCleanup.dispose();
+            },
+          };
+        },
+      },
     ],
   });
 
@@ -54,7 +91,7 @@ async function main() {
       context: async ({ req }): Promise<GraphQLContext> => {
         const session = await getSession({ req });
         console.log('CONTEXT SESSION', session);
-        return { session: session as Session, prisma };
+        return { session: session as Session, prisma, pubsub };
       },
     })
   );
