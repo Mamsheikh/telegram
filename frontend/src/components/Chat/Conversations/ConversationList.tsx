@@ -5,16 +5,23 @@ import {
   ConversationsData,
 } from '../../../utils/types';
 import ConversationItem from './ConversationItem';
+import { useRouter } from 'next/router';
+import { Session } from 'next-auth';
 
 interface ConversationListProps {
+  session: Session;
   setShow: (show: boolean) => void;
   conversations: Conversation[];
+  onViewConversation: (conversationId: string) => void;
 }
 
 const ConversationList: React.FC<ConversationListProps> = ({
+  session,
   setShow,
   conversations,
+  onViewConversation,
 }) => {
+  const router = useRouter();
   return (
     <div>
       <div className='flex items-center px-4 py-3 space-x-4'>
@@ -29,8 +36,14 @@ const ConversationList: React.FC<ConversationListProps> = ({
         />
       </div>
       <div className='space-y-4'>
-        {conversations.map((conversation, i) => (
-          <ConversationItem key={i} conversation={conversation} />
+        {conversations.map((conversation) => (
+          <ConversationItem
+            key={conversation.id}
+            userId={session.user.id}
+            conversation={conversation}
+            onClick={() => onViewConversation(conversation.id)}
+            isSelected={router.query.conversationId === conversation.id}
+          />
         ))}
       </div>
     </div>

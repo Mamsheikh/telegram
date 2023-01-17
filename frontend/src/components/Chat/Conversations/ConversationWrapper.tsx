@@ -11,6 +11,7 @@ import {
   ConversationPopulated,
   ConversationsData,
 } from '../../../utils/types';
+import { useRouter } from 'next/router';
 
 interface ConversationWrapperProps {
   session: Session;
@@ -27,6 +28,8 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
   const { data, subscribeToMore } = useQuery<ConversationsData>(
     conversationOperations.Queries.conversations
   );
+
+  const router = useRouter();
 
   console.log('QUERY DATA', data);
 
@@ -52,6 +55,10 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
         });
       },
     });
+  };
+
+  const onViewConversation = async (conversationId: string) => {
+    router.push({ query: { conversationId } });
   };
 
   const openModal = () => {
@@ -112,8 +119,10 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
       )}
       {data?.conversations && (
         <ConversationList
+          session={session}
           setShow={setShow}
           conversations={data?.conversations}
+          onViewConversation={onViewConversation}
         />
       )}
     </div>

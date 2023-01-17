@@ -3,16 +3,38 @@ import { Conversation, ConversationType } from '../../../utils/types';
 
 interface ConversationItemProps {
   conversation: Conversation;
+  onClick: () => void;
+  isSelected: boolean;
+  userId: string;
 }
 
 const ConversationItem: React.FC<ConversationItemProps> = ({
   conversation,
+  onClick,
+  isSelected,
+  userId,
 }) => {
+  const handleClick = (event: React.MouseEvent) => {
+    if (event.type === 'click') {
+      onClick();
+    } else if (event.type === 'contextmenu') {
+      event.preventDefault();
+      // setMenuOpen(true);
+    }
+  };
+
   return (
-    <div className='flex justify-between items-center hover:bg-gray-100 px-4 py-2 cursor-pointer'>
+    <div
+      onClick={handleClick}
+      onContextMenu={handleClick}
+      className={`flex justify-between items-center  ${
+        isSelected && 'bg-telegram-blue text-white'
+      }  px-4 py-2 cursor-pointer ${!isSelected && 'hover:bg-gray-100'}`}
+    >
       <div className='flex'>
         <div className='mr-4'>
           {conversation.conversationImg ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               className='h-12 w-12 rounded-full'
               src={conversation.conversationImg}
@@ -36,7 +58,13 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
             )}
             {conversation.conversationName}
           </h4>
-          <p className='text-xs mt-2 text-gray-400'>Binance academy</p>
+          <p
+            className={`text-xs mt-2 ${
+              isSelected ? 'text-white' : 'text-gray-400'
+            } `}
+          >
+            Binance academy
+          </p>
         </div>
       </div>
       <div className='h-5 w-5 rounded-full bg-telegram-blue'>
