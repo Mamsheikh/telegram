@@ -1,7 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+// import { ConversationPopulated } from './../../../frontend/src/utils/types';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { ISODateString } from 'next-auth';
 import { PubSub } from 'graphql-subscriptions';
 import { Context } from 'graphql-ws/lib/server';
+import { conversationPopulated } from '../graphql/resolvers/conversation';
 export interface GraphQLContext {
   session: Session | null;
   prisma: PrismaClient;
@@ -42,4 +44,12 @@ export enum ConversationType {
   DM = 'DM',
   CHANNEL = 'CHANNEL',
   GROUP = 'GROUP',
+}
+
+export type ConversationPopulated = Prisma.ConversationGetPayload<{
+  include: typeof conversationPopulated;
+}>;
+
+export interface ConversationCreatedSubscriptionPayload {
+  conversationCreated: ConversationPopulated;
 }

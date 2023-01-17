@@ -1,10 +1,12 @@
 import { GraphQLError } from 'graphql';
 import {
+  ConversationCreatedSubscriptionPayload,
   ConversationType,
   CreateConversationInput,
   GraphQLContext,
 } from './../../utils/types';
 import { Prisma } from '@prisma/client';
+import { withFilter } from 'graphql-subscriptions';
 
 const resolvers = {
   Query: {
@@ -73,7 +75,7 @@ const resolvers = {
           },
           include: conversationPopulated,
         });
-        console.log('CONVERSATION PAYLOAD', conversation);
+        // console.log('CONVERSATION PAYLOAD', conversation);
 
         pubsub.publish('CONVERSATION_CREATED', {
           conversationCreated: conversation,
@@ -90,11 +92,39 @@ const resolvers = {
   },
   Subscription: {
     conversationCreated: {
-      subscribe: (_: any, __: any, context: GraphQLContext) => {
-        const { pubsub } = context;
+      // subscribe: (_: any, __: any, context: GraphQLContext) => {
+      //   const { pubsub } = context;
 
-        return pubsub.asyncIterator(['CONVERSATION_CREATED']);
-      },
+      //   return pubsub.asyncIterator(['CONVERSATION_CREATED']);
+      // },
+      subscribe: withFilter(
+        (_: any, __: any, context: GraphQLContext) => {
+          const { pubsub } = context;
+
+          return pubsub.asyncIterator(['CONVERSATION_CREATED']);
+        },
+        (
+          payload: ConversationCreatedSubscriptionPayload,
+          _: any,
+          context: GraphQLContext
+        ) => {
+          const { session } = context;
+
+          if (!session?.user) {
+            throw new GraphQLError('Not authorized');
+          }
+          const { id: userId } = session.user;
+          const {
+            conversationCreated: { participants },
+          } = payload;
+
+          const userIsParticipant = !!participants.find(
+            (p) => p.userId === userId
+          );
+
+          return userIsParticipant;
+        }
+      ),
     },
   },
 };
