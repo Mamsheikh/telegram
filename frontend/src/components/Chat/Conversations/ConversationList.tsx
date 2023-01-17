@@ -29,8 +29,8 @@ const ConversationList: React.FC<ConversationListProps> = ({
         />
       </div>
       <div className='space-y-4'>
-        {conversations.map((conversation) => (
-          <ConversationItem key={conversation.id} conversation={conversation} />
+        {conversations.map((conversation, i) => (
+          <ConversationItem key={i} conversation={conversation} />
         ))}
       </div>
     </div>

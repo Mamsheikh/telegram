@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ConversationList from './ConversationList';
 import MenuBar from './MenuBar';
 import Modal from '../Modal';
@@ -6,7 +6,11 @@ import ChannelModal from '../Modal/ChannelModal';
 import { Session } from 'next-auth';
 import { useQuery } from '@apollo/client';
 import { conversationOperations } from '../../../graphql/operations/conversation';
-import { ConversationsData } from '../../../utils/types';
+import {
+  Conversation,
+  ConversationPopulated,
+  ConversationsData,
+} from '../../../utils/types';
 
 interface ConversationWrapperProps {
   session: Session;
@@ -20,10 +24,35 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [channelIsOpen, setChannelIsOpen] = useState(false);
-  const { data } = useQuery<ConversationsData>(
+  const { data, subscribeToMore } = useQuery<ConversationsData>(
     conversationOperations.Queries.conversations
   );
-  console.log('data', data);
+
+  console.log('QUERY DATA', data);
+
+  const subscribeToNewConversations = () => {
+    subscribeToMore({
+      document: conversationOperations.Subscriptions.conversationCreated,
+      updateQuery: (
+        prev,
+        {
+          subscriptionData,
+        }: {
+          subscriptionData: {
+            data: { conversationCreated: ConversationPopulated };
+          };
+        }
+      ) => {
+        if (!subscriptionData.data) return prev;
+        // console.log('SUBSCRIPTION DATA', subscriptionData);
+
+        const newConversation = subscriptionData.data.conversationCreated;
+        return Object.assign({}, prev, {
+          conversations: [...prev.conversations, newConversation],
+        });
+      },
+    });
+  };
 
   const openModal = () => {
     setIsOpen(true);
@@ -41,6 +70,14 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
   const closeChannelModal = () => {
     setChannelIsOpen(false);
   };
+
+  useEffect(() => {
+    subscribeToNewConversations();
+
+    // return () => {
+    //   second
+    // }
+  }, []);
 
   return (
     <div

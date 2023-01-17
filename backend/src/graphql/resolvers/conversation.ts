@@ -44,7 +44,7 @@ const resolvers = {
       args: CreateConversationInput,
       context: GraphQLContext
     ): Promise<{ conversationId: string }> => {
-      const { session, prisma } = context;
+      const { session, prisma, pubsub } = context;
       const {
         participantIds,
         conversationName,
@@ -73,6 +73,11 @@ const resolvers = {
           },
           include: conversationPopulated,
         });
+        console.log('CONVERSATION PAYLOAD', conversation);
+
+        pubsub.publish('CONVERSATION_CREATED', {
+          conversationCreated: conversation,
+        });
 
         return {
           conversationId: conversation.id,
@@ -81,6 +86,15 @@ const resolvers = {
         console.log('createConversation resolver error', error);
         throw new GraphQLError(error.message);
       }
+    },
+  },
+  Subscription: {
+    conversationCreated: {
+      subscribe: (_: any, __: any, context: GraphQLContext) => {
+        const { pubsub } = context;
+
+        return pubsub.asyncIterator(['CONVERSATION_CREATED']);
+      },
     },
   },
 };
