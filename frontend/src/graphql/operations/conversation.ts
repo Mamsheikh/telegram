@@ -20,6 +20,12 @@ const ConversationFields = `
 
 export const conversationOperations = {
   Queries: {
+    conversation: gql`
+    query Conversation($conversationId: String!) {
+      conversation(conversationId:$conversationId) {
+        ${ConversationFields}
+      }
+    }`,
     conversations: gql`
       query Conversations {
         conversations {

@@ -68,6 +68,10 @@ export interface ConversationsData {
   conversations: Array<Conversation>;
 }
 
+export interface ConversationData {
+  conversation: ConversationPopulated;
+}
+
 export const conversationPopulated =
   Prisma.validator<Prisma.ConversationInclude>()({
     participants: {

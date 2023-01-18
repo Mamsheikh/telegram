@@ -5,6 +5,7 @@ const typeDefs = gql`
   scalar Date
 
   type Query {
+    conversation(conversationId: String!): Conversation
     conversations: [Conversation]
   }
   type Mutation {

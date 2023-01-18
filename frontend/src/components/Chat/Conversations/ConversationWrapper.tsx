@@ -31,8 +31,6 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
 
   const router = useRouter();
 
-  console.log('QUERY DATA', data);
-
   const subscribeToNewConversations = () => {
     subscribeToMore({
       document: conversationOperations.Subscriptions.conversationCreated,

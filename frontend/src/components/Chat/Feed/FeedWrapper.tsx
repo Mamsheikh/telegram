@@ -10,10 +10,10 @@ const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow }) => {
   const { conversationId } = router.query;
   return (
     <div className=' flex-1' onClick={() => setShow(false)}>
-      {conversationId ? (
+      {conversationId && typeof conversationId === 'string' ? (
         <>
           <div className='flex flex-col h-screen'>
-            <Header />
+            <Header conversationId={conversationId} />
             <div
               className='h-screen'
               style={{
