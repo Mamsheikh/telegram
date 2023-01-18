@@ -10,6 +10,28 @@ import { withFilter } from 'graphql-subscriptions';
 
 const resolvers = {
   Query: {
+    conversation: async (
+      _: any,
+      args: { conversationId: string },
+      context: GraphQLContext
+    ) => {
+      const { conversationId } = args;
+      const { session, prisma } = context;
+
+      if (!session?.user) {
+        throw new GraphQLError('Not authorized');
+      }
+
+      try {
+        return await prisma.conversation.findUnique({
+          where: { id: conversationId },
+          include: conversationPopulated,
+        });
+      } catch (error: any) {
+        console.log('failed to query conversation: error', error);
+        throw new GraphQLError(error.message);
+      }
+    },
     conversations: async (_: any, __: any, context: GraphQLContext) => {
       const { session, prisma } = context;
       if (!session?.user) {

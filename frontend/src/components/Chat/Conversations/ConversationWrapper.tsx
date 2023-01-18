@@ -84,6 +84,7 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
     // return () => {
     //   second
     // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
