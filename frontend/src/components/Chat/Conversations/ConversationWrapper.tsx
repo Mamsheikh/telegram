@@ -88,7 +88,7 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
 
   return (
     <div
-      className='border-red-500 border-2 relative z-0 hidden sm:inline max-w-sm w-full'
+      className='relative z-0 hidden sm:inline max-w-sm w-full'
       //   onClick={() => setShow(false)}
     >
       {show && (
