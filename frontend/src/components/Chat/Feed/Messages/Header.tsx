@@ -13,9 +13,11 @@ import { useRouter } from 'next/router';
 
 interface HeaderProps {
   conversationId: string;
+  open: boolean;
+  setOpen: (open: boolean) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ conversationId }) => {
+const Header: React.FC<HeaderProps> = ({ conversationId, open, setOpen }) => {
   const router = useRouter();
   //   const { conversationId }: { conversationId: string } = router.query;
 
@@ -43,7 +45,12 @@ const Header: React.FC<HeaderProps> = ({ conversationId }) => {
       </div>
       <div>
         <div className='flex items-center space-x-3'>
-          <BsReverseLayoutSidebarReverse className='h-5 w-5 text-gray-500 cursor-pointer' />
+          <BsReverseLayoutSidebarReverse
+            className={`h-5 w-5 cursor-pointer ${
+              open ? 'text-telegram-blue' : 'text-gray-500'
+            }`}
+            onClick={() => setOpen(!open)}
+          />
           <BiDotsVerticalRounded className='h-6 w-6 text-gray-500 cursor-pointer' />
         </div>
       </div>
