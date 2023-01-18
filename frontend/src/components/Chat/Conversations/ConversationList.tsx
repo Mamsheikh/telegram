@@ -35,7 +35,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
           className='w-full px-4 py-1 rounded  bg-gray-100 focus:outline-none focus:border-sky-500 border-1 focus:ring-sky-500 focus:ring-1 sm:text-sm'
         />
       </div>
-      <div className='space-y-4'>
+      <div className=''>
         {conversations.map((conversation) => (
           <ConversationItem
             key={conversation.id}

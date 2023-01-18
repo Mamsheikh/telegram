@@ -1,4 +1,6 @@
 import { HiSpeakerphone, HiUsers } from 'react-icons/hi';
+import { formatRelative } from 'date-fns';
+import enUS from 'date-fns/locale/en-US';
 import { Conversation, ConversationType } from '../../../utils/types';
 
 interface ConversationItemProps {
@@ -7,6 +9,13 @@ interface ConversationItemProps {
   isSelected: boolean;
   userId: string;
 }
+
+const formatRelativeLocale = {
+  lastWeek: 'eeee',
+  yesterday: "'Yesterday",
+  today: 'p',
+  other: 'MM/dd/yy',
+};
 
 const ConversationItem: React.FC<ConversationItemProps> = ({
   conversation,
@@ -67,8 +76,21 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
           </p>
         </div>
       </div>
-      <div className='h-5 w-5 rounded-full bg-telegram-blue'>
-        <span className='text-white text-xs flex justify-center'>2</span>
+      <div className='flex flex-col items-center'>
+        <span className={`text-sm mb-2 ${isSelected && 'text-white'}`}>
+          {formatRelative(new Date(conversation.updatedAt), new Date(), {
+            locale: {
+              ...enUS,
+              formatRelative: (token) =>
+                formatRelativeLocale[
+                  token as keyof typeof formatRelativeLocale
+                ],
+            },
+          })}
+        </span>
+        <div className='h-5 w-5 rounded-full bg-telegram-blue'>
+          <span className='text-white text-xs flex justify-center'>2</span>
+        </div>
       </div>
     </div>
   );

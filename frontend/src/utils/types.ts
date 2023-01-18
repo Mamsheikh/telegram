@@ -57,6 +57,7 @@ export interface Conversation {
   conversationType: ConversationType;
   participants: Participant[];
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface Participant {
