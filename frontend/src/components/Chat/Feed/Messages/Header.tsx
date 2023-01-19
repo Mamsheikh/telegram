@@ -33,9 +33,11 @@ const Header: React.FC<HeaderProps> = ({ open, setOpen, setConversation }) => {
     },
   });
 
-  if (data?.conversation) {
-    setConversation(data.conversation);
-  }
+  useEffect(() => {
+    {
+      data?.conversation && setConversation(data?.conversation);
+    }
+  }, [data?.conversation]);
 
   return (
     <div className='flex justify-between items-center bg-white px-4 py-2 border'>

@@ -25,10 +25,12 @@ const Sidebar: React.FC<SidebarProps> = ({ conversation, open, setOpen }) => {
           />
         </div>
         <div className='flex items-center p-4 mt-4 space-x-5'>
-          <UserAvatar
-            username={conversation!.conversationName}
-            avatarUrl={conversation?.conversationImg}
-          />
+          {conversation && (
+            <UserAvatar
+              username={conversation.conversationName}
+              avatarUrl={conversation.conversationImg}
+            />
+          )}
           <div className='flex flex-col '>
             <h4 className='font-semibold'>{conversation?.conversationName}</h4>
             <p className='text-sm text-gray-400'>
