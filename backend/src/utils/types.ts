@@ -73,3 +73,11 @@ export const messagePopulated = Prisma.validator<Prisma.MessageInclude>()({
     },
   },
 });
+
+export interface MessageSentSubscriptionPayload {
+  messageSent: MessagePopulated;
+}
+
+export type MessagePopulated = Prisma.MessageGetPayload<{
+  include: typeof messagePopulated;
+}>;

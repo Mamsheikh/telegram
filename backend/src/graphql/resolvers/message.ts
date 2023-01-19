@@ -1,5 +1,10 @@
+import { withFilter } from 'graphql-subscriptions';
 import { GraphQLError } from 'graphql';
-import { GraphQLContext, messagePopulated } from './../../utils/types';
+import {
+  GraphQLContext,
+  MessageSentSubscriptionPayload,
+  messagePopulated,
+} from './../../utils/types';
 import { SendMessageArguments } from '../../utils/types';
 
 const resolvers = {
@@ -76,7 +81,24 @@ const resolvers = {
       return true;
     },
   },
-  Subscription: {},
+  Subscription: {
+    messageSent: {
+      subscribe: withFilter(
+        (_: any, __: any, context: GraphQLContext) => {
+          const { pubsub } = context;
+
+          return pubsub.asyncIterator(['MESSAGE_SENT']);
+        },
+        (
+          payload: MessageSentSubscriptionPayload,
+          args: { conversationId: string },
+          context: GraphQLContext
+        ) => {
+          return payload.messageSent.conversationId === args.conversationId;
+        }
+      ),
+    },
+  },
 };
 
 export default resolvers;
