@@ -45,7 +45,7 @@ const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow, session }) => {
                   userId={session.user.id}
                 />
               </div>
-              <Input conversationId={conversationId} />
+              <Input session={session} conversationId={conversationId} />
             </div>
           </>
         ) : (

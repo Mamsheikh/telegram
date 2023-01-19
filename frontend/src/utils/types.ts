@@ -118,3 +118,13 @@ export interface MessagesData {
 export interface MessagesVariables {
   conversationId: string;
 }
+
+export interface SendMessageVariables {
+  conversationId: string;
+  senderId: string;
+  body: string;
+}
+
+export interface SendMessageData {
+  sendMessage: boolean;
+}
