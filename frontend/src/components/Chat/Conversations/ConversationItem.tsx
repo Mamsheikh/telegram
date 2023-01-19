@@ -2,6 +2,7 @@ import { HiSpeakerphone, HiUsers } from 'react-icons/hi';
 import { formatRelative } from 'date-fns';
 import enUS from 'date-fns/locale/en-US';
 import { Conversation, ConversationType } from '../../../utils/types';
+import UserAvatar from '../../common/UserAvatar';
 
 interface ConversationItemProps {
   conversation: Conversation;
@@ -42,20 +43,10 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
     >
       <div className='flex'>
         <div className='mr-4'>
-          {conversation.conversationImg ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              className='h-12 w-12 rounded-full'
-              src={conversation.conversationImg}
-              alt=''
-            />
-          ) : (
-            <div className='relative inline-flex items-center justify-center w-12 h-12 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600'>
-              <span className='uppercase font-medium text-gray-600 dark:text-gray-300'>
-                {conversation.conversationName[0]}
-              </span>
-            </div>
-          )}
+          <UserAvatar
+            avatarUrl={conversation.conversationImg}
+            username={conversation.conversationName}
+          />
         </div>
         <div className='flex flex-col'>
           <h4 className='font-semibold flex items-center'>
