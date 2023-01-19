@@ -12,7 +12,7 @@ const Chat: React.FC<ChatProps> = ({ session }) => {
   return (
     <div className='h-screen flex'>
       <ConversationWrapper session={session} show={show} setShow={setShow} />
-      <FeedWrapper setShow={setShow} />
+      <FeedWrapper setShow={setShow} session={session} />
     </div>
   );
 };

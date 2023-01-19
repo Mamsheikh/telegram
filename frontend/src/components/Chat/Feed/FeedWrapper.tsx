@@ -5,12 +5,15 @@ import { Conversation } from '../../../utils/types';
 import Header from './Messages/Header';
 import Sidebar from './Messages/Sidebar';
 import Input from './Messages/Input';
+import Messages from './Messages/Messages';
+import { Session } from 'next-auth';
 
 interface FeedWrapperProps {
   setShow: (show: boolean) => void;
+  session: Session;
 }
 
-const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow }) => {
+const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow, session }) => {
   const [conversation, setConversation] = useState<Conversation | undefined>();
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -36,7 +39,12 @@ const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow }) => {
                   objectFit: 'cover',
                   backgroundSize: 'contain',
                 }}
-              ></div>
+              >
+                <Messages
+                  conversationId={conversationId}
+                  userId={session.user.id}
+                />
+              </div>
               <Input conversationId={conversationId} />
             </div>
           </>
