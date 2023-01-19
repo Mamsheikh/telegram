@@ -4,6 +4,7 @@ import { HiOutlineX } from 'react-icons/hi';
 import { Conversation } from '../../../utils/types';
 import Header from './Messages/Header';
 import Sidebar from './Messages/Sidebar';
+import Input from './Messages/Input';
 
 interface FeedWrapperProps {
   setShow: (show: boolean) => void;
@@ -18,7 +19,7 @@ const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow }) => {
   return (
     <>
       <div className=' flex-1' onClick={() => setShow(false)}>
-        {conversationId ? (
+        {conversationId && typeof conversationId === 'string' ? (
           <>
             <div className='flex flex-col h-screen'>
               <Header
@@ -36,6 +37,7 @@ const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow }) => {
                   backgroundSize: 'contain',
                 }}
               ></div>
+              <Input conversationId={conversationId} />
             </div>
           </>
         ) : (

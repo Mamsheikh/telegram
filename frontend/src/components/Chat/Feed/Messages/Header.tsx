@@ -22,8 +22,7 @@ const Header: React.FC<HeaderProps> = ({ open, setOpen, setConversation }) => {
   const router = useRouter();
   const conversationId =
     (router.query.conversationId as string | undefined) || '';
-  const id = conversationId as string;
-  // conversationId = stringify(conversationId)
+
   const { data, loading } = useQuery<
     ConversationData,
     { conversationId: string }
