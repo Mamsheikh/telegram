@@ -50,6 +50,15 @@ export type ConversationPopulated = Prisma.ConversationGetPayload<{
   include: typeof conversationPopulated;
 }>;
 
+export type ParticipantPopulated = Prisma.ConvesationParticipantGetPayload<{
+  include: typeof participatsPopulated;
+}>;
+
+export const participatsPopulated =
+  Prisma.validator<Prisma.ConvesationParticipantInclude>()({
+    user: { select: { id: true, username: true, image: true } },
+  });
+
 export interface ConversationCreatedSubscriptionPayload {
   conversationCreated: ConversationPopulated;
 }
