@@ -53,3 +53,23 @@ export type ConversationPopulated = Prisma.ConversationGetPayload<{
 export interface ConversationCreatedSubscriptionPayload {
   conversationCreated: ConversationPopulated;
 }
+
+/**
+ * MESSAGE TYPES
+ */
+
+export interface SendMessageArguments {
+  conversationId: string;
+  senderId: string;
+  body: string;
+}
+
+export const messagePopulated = Prisma.validator<Prisma.MessageInclude>()({
+  sender: {
+    select: {
+      id: true,
+      username: true,
+      image: true,
+    },
+  },
+});

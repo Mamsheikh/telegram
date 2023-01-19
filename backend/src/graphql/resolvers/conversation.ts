@@ -80,6 +80,8 @@ const resolvers = {
         throw new GraphQLError('Not authorized');
       }
 
+      const { id: userId } = session.user;
+
       try {
         const conversation = await prisma.conversation.create({
           data: {
@@ -91,6 +93,7 @@ const resolvers = {
                 data: participantIds.map((id) => ({
                   userId: id,
                   unSeenMessageCount: 0,
+                  hasSeenLatestMessage: id === userId,
                 })),
               },
             },

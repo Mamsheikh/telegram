@@ -72,14 +72,15 @@ model Conversation {
 }
 
 model ConvesationParticipant {
-  id                 String       @id @default(cuid())
-  userId             String
-  user               User         @relation(fields: [userId], references: [id])
-  conversationId     String
-  conversation       Conversation @relation(fields: [conversationId], references: [id])
-  unSeenMessageCount Int
-  createdAt          DateTime     @default(now())
-  updatedAt          DateTime     @updatedAt
+  id                   String       @id @default(cuid())
+  userId               String
+  user                 User         @relation(fields: [userId], references: [id])
+  conversationId       String
+  conversation         Conversation @relation(fields: [conversationId], references: [id])
+  unSeenMessageCount   Int
+  hasSeenLatestMessage Boolean
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
 }
 
 model Message {
