@@ -12,15 +12,18 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 interface HeaderProps {
-  conversationId: string;
+  //   conversation: Conversation;
   open: boolean;
   setOpen: (open: boolean) => void;
+  setConversation: (conversation: Conversation) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ conversationId, open, setOpen }) => {
+const Header: React.FC<HeaderProps> = ({ open, setOpen, setConversation }) => {
   const router = useRouter();
-  //   const { conversationId }: { conversationId: string } = router.query;
-
+  const conversationId =
+    (router.query.conversationId as string | undefined) || '';
+  const id = conversationId as string;
+  // conversationId = stringify(conversationId)
   const { data, loading } = useQuery<
     ConversationData,
     { conversationId: string }
@@ -28,19 +31,18 @@ const Header: React.FC<HeaderProps> = ({ conversationId, open, setOpen }) => {
     variables: {
       conversationId,
     },
-    //   fetchPolicy: 'network-only',
   });
 
-  //   console.log('conversation', data?.conversation);
-  //   const participants:Participant[] = data?.conversation?.participants;
-  if (!data?.conversation) return null;
+  if (data?.conversation) {
+    setConversation(data.conversation);
+  }
+
   return (
     <div className='flex justify-between items-center bg-white px-4 py-2 border'>
       <div>
         <h4 className='font-semibold'>{data?.conversation.conversationName}</h4>
         <span className='text-sm text-gray-500'>
-          {data?.conversation?.participants.length} subscriber
-          {data?.conversation?.participants.length > 1 ? 's' : ''}
+          {data?.conversation.participants.length} subscribers
         </span>
       </div>
       <div>

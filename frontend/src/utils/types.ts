@@ -69,7 +69,7 @@ export interface ConversationsData {
 }
 
 export interface ConversationData {
-  conversation: ConversationPopulated;
+  conversation: Conversation;
 }
 
 export const conversationPopulated =

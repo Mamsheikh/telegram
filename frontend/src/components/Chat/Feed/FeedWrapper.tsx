@@ -1,26 +1,33 @@
 import { useRouter } from 'next/router';
-import Header from './Messages/Header';
 import { useState } from 'react';
+import { HiOutlineX } from 'react-icons/hi';
+import { Conversation } from '../../../utils/types';
+import Header from './Messages/Header';
+import Sidebar from './Messages/Sidebar';
 
 interface FeedWrapperProps {
   setShow: (show: boolean) => void;
 }
 
 const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow }) => {
+  const [conversation, setConversation] = useState<Conversation | undefined>();
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { conversationId } = router.query;
+
   return (
     <>
       <div className=' flex-1' onClick={() => setShow(false)}>
-        {conversationId && typeof conversationId === 'string' ? (
+        {conversationId ? (
           <>
             <div className='flex flex-col h-screen'>
               <Header
-                conversationId={conversationId}
+                // conversation={data?.conversation}
+                setConversation={setConversation}
                 open={open}
                 setOpen={setOpen}
               />
+              {/* )} */}
               <div
                 className='h-screen'
                 style={{
@@ -46,7 +53,7 @@ const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow }) => {
           </div>
         )}
       </div>
-      <div className={`${open ? 'inline' : 'hidden'}`}>hello wolrd</div>
+      <Sidebar open={open} setOpen={setOpen} conversation={conversation} />
     </>
   );
 };
