@@ -1,11 +1,15 @@
 import { HiSpeakerphone, HiUsers } from 'react-icons/hi';
 import { formatRelative } from 'date-fns';
 import enUS from 'date-fns/locale/en-US';
-import { Conversation, ConversationType } from '../../../utils/types';
+import {
+  Conversation,
+  ConversationPopulated,
+  ConversationType,
+} from '../../../utils/types';
 import UserAvatar from '../../common/UserAvatar';
 
 interface ConversationItemProps {
-  conversation: Conversation;
+  conversation: ConversationPopulated;
   onClick: () => void;
   isSelected: boolean;
   userId: string;
@@ -44,8 +48,8 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       <div className='flex'>
         <div className='mr-4'>
           <UserAvatar
-            avatarUrl={conversation.conversationImg}
-            username={conversation.conversationName}
+            avatarUrl={conversation.conversationImg as string}
+            username={conversation.conversationName as string}
           />
         </div>
         <div className='flex flex-col'>
@@ -63,7 +67,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
               isSelected ? 'text-white' : 'text-gray-400'
             } `}
           >
-            Binance academy
+            {conversation.latestMessage?.body}
           </p>
         </div>
       </div>

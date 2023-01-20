@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client';
+import { MessageFields } from './message';
 
 const ConversationFields = `
   
@@ -15,6 +16,9 @@ const ConversationFields = `
     conversationImg
     conversationName
     conversationType
+    latestMessage {
+      ${MessageFields}
+    }
 
 `;
 

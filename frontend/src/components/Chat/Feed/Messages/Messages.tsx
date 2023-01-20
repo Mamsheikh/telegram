@@ -1,7 +1,13 @@
 import { useQuery } from '@apollo/client';
 import { messageOperations } from '../../../../graphql/operations/message';
-import { MessagesData, MessagesVariables } from '../../../../utils/types';
+import {
+  MessageSubscriptionData,
+  MessagesData,
+  MessagesVariables,
+} from '../../../../utils/types';
 import { toast } from 'react-hot-toast';
+import { useEffect } from 'react';
+import MessageItem from './MessageItem';
 
 interface MessagesProps {
   userId: string;
@@ -20,15 +26,41 @@ const Messages: React.FC<MessagesProps> = ({ userId, conversationId }) => {
       toast.error(message);
     },
   });
+  // console.log('USERID', userId);
 
-  console.log('MESSAGES', data);
+  const subscribeToMoreMessages = (conversationId: string) => {
+    subscribeToMore({
+      document: messageOperations.Subscriptions.messageSent,
+      variables: {
+        conversationId,
+      },
+      updateQuery: (prev, { subscriptionData }: MessageSubscriptionData) => {
+        if (!subscriptionData) return prev;
+        console.log('SUBSCRIPTION DATA', subscriptionData);
+
+        const newMessages = subscriptionData.data.messageSent;
+
+        return Object.assign({}, prev, {
+          messages: [...prev.messages, newMessages],
+        });
+      },
+    });
+  };
+
+  useEffect(() => {
+    subscribeToMoreMessages(conversationId);
+  }, [conversationId]);
 
   return (
     <>
       {loading && <div>loading...</div>}
       {data?.messages &&
         data.messages.map((message) => (
-          <div key={message.id}>{message.body}</div>
+          <MessageItem
+            key={message.id}
+            message={message}
+            sentByMe={message.sender.id === userId}
+          />
         ))}
     </>
   );

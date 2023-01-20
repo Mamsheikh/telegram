@@ -1,14 +1,14 @@
 import { gql } from '@apollo/client';
 
-const MessageFields = `
-sender {
-    id
-    username
-    image
-  }
-id
-createdAt
-body
+export const MessageFields = `
+  sender {
+      id
+      username
+      image
+    }
+  id
+  createdAt
+  body
 `;
 
 export const messageOperations = {

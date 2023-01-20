@@ -1,4 +1,3 @@
-import { MessagePopulated } from './../../../backend/src/utils/types';
 import { Prisma } from '@prisma/client';
 
 /**
@@ -66,7 +65,7 @@ export interface Participant {
   user: User;
 }
 export interface ConversationsData {
-  conversations: Array<Conversation>;
+  conversations: Array<ConversationPopulated>;
 }
 
 export interface ConversationData {
@@ -127,4 +126,26 @@ export interface SendMessageVariables {
 
 export interface SendMessageData {
   sendMessage: boolean;
+}
+
+export const messagePopulated = Prisma.validator<Prisma.MessageInclude>()({
+  sender: {
+    select: {
+      id: true,
+      username: true,
+      image: true,
+    },
+  },
+});
+
+export type MessagePopulated = Prisma.MessageGetPayload<{
+  include: typeof messagePopulated;
+}>;
+
+export interface MessageSubscriptionData {
+  subscriptionData: {
+    data: {
+      messageSent: MessagePopulated;
+    };
+  };
 }

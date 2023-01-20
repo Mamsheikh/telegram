@@ -27,7 +27,7 @@ const UserAvatar: React.FC<Props> = ({ username, avatarUrl }) => {
     <div>
       {avatarUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img className='h-12 w-12 rounded-full' src={(avatarUrl = '')} alt='' />
+        <img className='h-8 w-8 rounded-full' src={avatarUrl} alt='' />
       ) : (
         <div
           style={{ backgroundColor: randomColor }}

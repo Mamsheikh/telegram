@@ -24,7 +24,7 @@ const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow, session }) => {
       <div className=' flex-1' onClick={() => setShow(false)}>
         {conversationId && typeof conversationId === 'string' ? (
           <>
-            <div className='flex flex-col h-screen'>
+            <div className='flex flex-col h-screen '>
               <Header
                 // conversation={data?.conversation}
                 setConversation={setConversation}
@@ -33,7 +33,7 @@ const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow, session }) => {
               />
               {/* )} */}
               <div
-                className='h-screen'
+                className='h-screen overflow-hidden overflow-y-auto'
                 style={{
                   backgroundImage: 'url(images/peakpx.jpg)',
                   objectFit: 'cover',
@@ -57,7 +57,7 @@ const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow, session }) => {
               backgroundSize: 'contain',
             }}
           >
-            <h4 className='text-white bg-green-500 px-2 rounded-full'>
+            <h4 className='text-white bg-black bg-opacity-20 text-sm px-3 py-1 rounded-full'>
               Select a chat or start messaging
             </h4>
           </div>
