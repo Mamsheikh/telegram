@@ -1,3 +1,5 @@
+import { formatRelative } from 'date-fns';
+import enUS from 'date-fns/locale/en-US';
 import { MessagePopulated } from '../../../../utils/types';
 import UserAvatar from '../../../common/UserAvatar';
 
@@ -5,6 +7,13 @@ interface MessageItemProps {
   message: MessagePopulated;
   sentByMe: boolean;
 }
+
+const formatRelativeLocale = {
+  lastWeek: "eeee 'at' p",
+  yesterday: "'Yesterday at' p",
+  today: 'p',
+  other: 'MM/dd/yy',
+};
 
 const SenderBubble = ({ message }: { message: MessagePopulated }) => {
   return (
@@ -15,35 +24,47 @@ const SenderBubble = ({ message }: { message: MessagePopulated }) => {
           avatarUrl={message.sender.image as string}
         />
       </div>
-      {/* <div className='chat-header'>
-        {message.sender.username}
-        <time className='text-xs opacity-50'>12:45</time>
-      </div> */}
-      <div className='chat-bubble bg-teal-50 text-black flex flex-col'>
+      <div className='chat-bubble bg-teal-50 px-3 py-1 text-black flex flex-col max-w-md'>
         <span className='font-semibold text-telegram-blue'>
           {message.sender.username}
         </span>
-        {message.body}
+        <span className='leading-tight'>{message.body}</span>
+        <div className='flex justify-end'>
+          <span className='text-xs text-gray-400'>
+            {formatRelative(message.createdAt, new Date(), {
+              locale: {
+                ...enUS,
+                formatRelative: (token) =>
+                  formatRelativeLocale[
+                    token as keyof typeof formatRelativeLocale
+                  ],
+              },
+            })}
+          </span>
+        </div>
       </div>
-      <div className='chat-footer opacity-50'>Delivered</div>
     </div>
   );
 };
 const ReceiverBubble = ({ message }: { message: MessagePopulated }) => {
   return (
     <div className='chat chat-end'>
-      {/* <div className='chat-image avatar'>
-        <UserAvatar
-          username={message.sender.username as string}
-          avatarUrl={message.sender.image as string}
-        />
-      </div> */}
-      {/* <div className='chat-header'>
-        {message.sender.username}
-        <time className='text-xs opacity-50'>12:46</time>
-      </div> */}
-      <div className='chat-bubble bg-green-200 text-black'>{message.body}</div>
-      <div className='chat-footer opacity-50'>Seen at 12:46</div>
+      <div className='chat-bubble bg-green-200 px-3 py-1 text-black max-w-md leading-normal'>
+        <span className='leading-tight'>{message.body}</span>
+        <div className='flex justify-end'>
+          <span className='text-xs text-gray-400'>
+            {formatRelative(message.createdAt, new Date(), {
+              locale: {
+                ...enUS,
+                formatRelative: (token) =>
+                  formatRelativeLocale[
+                    token as keyof typeof formatRelativeLocale
+                  ],
+              },
+            })}
+          </span>
+        </div>
+      </div>
     </div>
   );
 };

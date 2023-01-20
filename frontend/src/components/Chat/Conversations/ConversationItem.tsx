@@ -63,7 +63,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
             {conversation.conversationName}
           </h4>
           <p
-            className={`text-xs mt-2 ${
+            className={`text-xs mt-2  truncate max-w-[14rem] ${
               isSelected ? 'text-white' : 'text-gray-400'
             } `}
           >

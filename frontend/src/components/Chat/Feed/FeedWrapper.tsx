@@ -33,7 +33,7 @@ const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow, session }) => {
               />
               {/* )} */}
               <div
-                className='h-screen overflow-hidden overflow-y-auto'
+                className='h-screen overflow-hidden overflow-y-auto px-4 py-2'
                 style={{
                   backgroundImage: 'url(images/peakpx.jpg)',
                   objectFit: 'cover',
