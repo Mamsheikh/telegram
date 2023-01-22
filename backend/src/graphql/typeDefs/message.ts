@@ -10,6 +10,7 @@ const typeDefs = gql`
 
   type Mutation {
     sendMessage(
+      id: String!
       conversationId: String!
       senderId: String!
       body: String!

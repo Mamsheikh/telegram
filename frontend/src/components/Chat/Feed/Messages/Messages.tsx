@@ -38,10 +38,13 @@ const Messages: React.FC<MessagesProps> = ({ userId, conversationId }) => {
         if (!subscriptionData) return prev;
         console.log('SUBSCRIPTION DATA', subscriptionData);
 
-        const newMessages = subscriptionData.data.messageSent;
+        const newMessage = subscriptionData.data.messageSent;
 
         return Object.assign({}, prev, {
-          messages: [...prev.messages, newMessages],
+          messages:
+            newMessage.sender.id === userId
+              ? prev.messages
+              : [...prev.messages, newMessage],
         });
       },
     });

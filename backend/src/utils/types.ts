@@ -68,6 +68,7 @@ export interface ConversationCreatedSubscriptionPayload {
  */
 
 export interface SendMessageArguments {
+  id: string;
   conversationId: string;
   senderId: string;
   body: string;

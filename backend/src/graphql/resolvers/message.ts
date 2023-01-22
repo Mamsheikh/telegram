@@ -66,7 +66,7 @@ const resolvers = {
       args: SendMessageArguments,
       context: GraphQLContext
     ): Promise<boolean> => {
-      const { conversationId, body, senderId } = args;
+      const { id, conversationId, body, senderId } = args;
       const { pubsub, prisma, session } = context;
 
       if (!session?.user) {
@@ -83,6 +83,7 @@ const resolvers = {
       try {
         const newMessage = await prisma.message.create({
           data: {
+            id,
             conversationId,
             senderId,
             body,

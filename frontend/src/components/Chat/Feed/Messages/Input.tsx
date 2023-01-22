@@ -3,9 +3,15 @@ import { ImAttachment } from 'react-icons/im';
 import { BiMicrophone } from 'react-icons/bi';
 import { BsEmojiSmile } from 'react-icons/bs';
 import { useState } from 'react';
+import cuid from 'cuid';
 import { toast } from 'react-hot-toast';
 import { useMutation } from '@apollo/client';
-import { SendMessageData, SendMessageVariables } from '../../../../utils/types';
+import {
+  MessagesData,
+  MessagesVariables,
+  SendMessageData,
+  SendMessageVariables,
+} from '../../../../utils/types';
 import { messageOperations } from '../../../../graphql/operations/message';
 interface InputProps {
   session: Session;
@@ -22,19 +28,60 @@ const Input: React.FC<InputProps> = ({ session, conversationId }) => {
     event.preventDefault();
 
     const { id: senderId } = session?.user;
+    const messageId: string = cuid();
 
     try {
       const { data, errors } = await sendMessage({
         variables: {
+          id: messageId,
           conversationId,
           senderId,
           body: messageBody,
+        },
+        optimisticResponse: {
+          sendMessage: true,
+        },
+        update: (cache) => {
+          setMessageBody('');
+          const existing = cache.readQuery<MessagesData, MessagesVariables>({
+            query: messageOperations.Queries.messages,
+            variables: {
+              conversationId,
+            },
+          }) as MessagesData;
+
+          cache.writeQuery({
+            query: messageOperations.Queries.messages,
+            variables: {
+              conversationId,
+            },
+            data: {
+              ...existing,
+              messages: [
+                ...existing.messages,
+                {
+                  id: messageId,
+                  conversationId,
+                  senderId,
+                  body: messageBody,
+                  sender: {
+                    id: session.user.id,
+                    username: session.user.username,
+                    image: session.user.image,
+                  },
+                  createdAt: new Date(Date.now()),
+                  updatedAt: new Date(Date.now()),
+                },
+              ],
+            },
+          });
         },
       });
 
       if (!data?.sendMessage || errors) {
         throw new Error('failed to send message');
       }
+      
     } catch (error: any) {
       console.log('onSendMessage error', error);
       toast.error(error.message);
