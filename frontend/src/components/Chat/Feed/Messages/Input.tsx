@@ -48,10 +48,6 @@ const Input: React.FC<InputProps> = ({
         },
         update: (cache) => {
           setMessageBody('');
-<<<<<<< HEAD
-          onNewMessage();
-=======
->>>>>>> 8629fb9f1e6c7388329b5ec9c1fe2c6fc3843477
           const existing = cache.readQuery<MessagesData, MessagesVariables>({
             query: messageOperations.Queries.messages,
             variables: {
@@ -90,7 +86,6 @@ const Input: React.FC<InputProps> = ({
       if (!data?.sendMessage || errors) {
         throw new Error('failed to send message');
       }
-      
     } catch (error: any) {
       console.log('onSendMessage error', error);
       toast.error(error.message);

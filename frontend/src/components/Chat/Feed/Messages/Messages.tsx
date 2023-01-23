@@ -42,13 +42,8 @@ const Messages: React.FC<MessagesProps> = ({
       updateQuery: (prev, { subscriptionData }: MessageSubscriptionData) => {
         if (!subscriptionData) return prev;
         console.log('SUBSCRIPTION DATA', subscriptionData);
-<<<<<<< HEAD
-        const newMessage = subscriptionData.data.messageSent;
-        // onNewMessage();
-=======
 
         const newMessage = subscriptionData.data.messageSent;
->>>>>>> 8629fb9f1e6c7388329b5ec9c1fe2c6fc3843477
 
         return Object.assign({}, prev, {
           messages:
