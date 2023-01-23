@@ -4,6 +4,7 @@ import {
   ConversationType,
   CreateConversationInput,
   GraphQLContext,
+  MarkConversationAsReadArgs,
 } from './../../utils/types';
 import { Prisma } from '@prisma/client';
 import { withFilter } from 'graphql-subscriptions';
@@ -111,6 +112,45 @@ const resolvers = {
         };
       } catch (error: any) {
         console.log('createConversation resolver error', error);
+        throw new GraphQLError(error.message);
+      }
+    },
+    markConversationAsRead: async (
+      _: any,
+      args: MarkConversationAsReadArgs,
+      context: GraphQLContext
+    ): Promise<boolean> => {
+      const { session, prisma } = context;
+      const { userId, conversationId } = args;
+
+      if (!session?.user) {
+        throw new GraphQLError('Not authorized');
+      }
+
+      try {
+        const participant = await prisma.convesationParticipant.findFirst({
+          where: {
+            conversationId,
+            userId,
+          },
+        });
+
+        if (!participant) {
+          throw new GraphQLError('Not participant found with the Id');
+        }
+
+        await prisma.convesationParticipant.update({
+          where: {
+            id: participant.id,
+          },
+          data: {
+            hasSeenLatestMessage: true,
+            unSeenMessageCount: 0,
+          },
+        });
+        return true;
+      } catch (error: any) {
+        console.log('markConversationAsRead error', error);
         throw new GraphQLError(error.message);
       }
     },

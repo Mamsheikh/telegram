@@ -63,6 +63,11 @@ export interface ConversationCreatedSubscriptionPayload {
   conversationCreated: ConversationPopulated;
 }
 
+export interface MarkConversationAsReadArgs {
+  userId: string;
+  conversationId: string;
+}
+
 /**
  * MESSAGE TYPES
  */

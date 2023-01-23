@@ -78,7 +78,6 @@ const resolvers = {
       if (userId !== senderId) {
         throw new GraphQLError('Not authorized');
       }
-      console.log('senderId', senderId);
 
       try {
         const newMessage = await prisma.message.create({

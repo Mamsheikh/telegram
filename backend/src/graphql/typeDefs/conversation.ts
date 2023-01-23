@@ -15,6 +15,7 @@ const typeDefs = gql`
       conversationType: ConversationType
       participantIds: [String]
     ): CreateConversationResponse
+    markConversationAsRead(userId: String!, conversationId: String!): Boolean
   }
   type Subscription {
     conversationCreated: Conversation
