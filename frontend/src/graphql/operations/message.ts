@@ -24,11 +24,13 @@ export const messageOperations = {
   Mutations: {
     sendMessage: gql`
       mutation SendMessage(
+        $id: String!
         $senderId: String!
         $body: String!
         $conversationId: String!
       ) {
         sendMessage(
+          id: $id
           senderId: $senderId
           body: $body
           conversationId: $conversationId

@@ -6,15 +6,20 @@ import {
   MessagesVariables,
 } from '../../../../utils/types';
 import { toast } from 'react-hot-toast';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import MessageItem from './MessageItem';
 
 interface MessagesProps {
   userId: string;
   conversationId: string;
+  scrollToBottom: () => void;
 }
 
-const Messages: React.FC<MessagesProps> = ({ userId, conversationId }) => {
+const Messages: React.FC<MessagesProps> = ({
+  userId,
+  conversationId,
+  scrollToBottom,
+}) => {
   const { data, loading, subscribeToMore } = useQuery<
     MessagesData,
     MessagesVariables
@@ -37,18 +42,25 @@ const Messages: React.FC<MessagesProps> = ({ userId, conversationId }) => {
       updateQuery: (prev, { subscriptionData }: MessageSubscriptionData) => {
         if (!subscriptionData) return prev;
         console.log('SUBSCRIPTION DATA', subscriptionData);
-
-        const newMessages = subscriptionData.data.messageSent;
+        const newMessage = subscriptionData.data.messageSent;
+        // onNewMessage();
 
         return Object.assign({}, prev, {
-          messages: [...prev.messages, newMessages],
+          messages:
+            newMessage.sender.id === userId
+              ? prev.messages
+              : [...prev.messages, newMessage],
         });
       },
     });
   };
 
   useEffect(() => {
+    scrollToBottom();
+  }, [data?.messages]);
+  useEffect(() => {
     subscribeToMoreMessages(conversationId);
+    // onNewMessage();
   }, [conversationId]);
 
   return (
@@ -56,11 +68,13 @@ const Messages: React.FC<MessagesProps> = ({ userId, conversationId }) => {
       {loading && <div>loading...</div>}
       {data?.messages &&
         data.messages.map((message) => (
-          <MessageItem
-            key={message.id}
-            message={message}
-            sentByMe={message.sender.id === userId}
-          />
+          <>
+            <MessageItem
+              key={message.id}
+              message={message}
+              sentByMe={message.sender.id === userId}
+            />
+          </>
         ))}
     </>
   );

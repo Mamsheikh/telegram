@@ -119,6 +119,7 @@ export interface MessagesVariables {
 }
 
 export interface SendMessageVariables {
+  id: string;
   conversationId: string;
   senderId: string;
   body: string;

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { HiOutlineX } from 'react-icons/hi';
 import { Conversation } from '../../../utils/types';
 import Header from './Messages/Header';
@@ -19,6 +19,19 @@ const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow, session }) => {
   const router = useRouter();
   const { conversationId } = router.query;
 
+  const ref = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.scrollTop = ref.current.scrollHeight;
+    }
+  }, [ref]);
+
   return (
     <>
       <div className=' flex-1' onClick={() => setShow(false)}>
@@ -33,6 +46,7 @@ const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow, session }) => {
               />
               {/* )} */}
               <div
+                ref={ref}
                 className='h-screen overflow-hidden overflow-y-auto px-4 py-2'
                 style={{
                   backgroundImage: 'url(images/peakpx.jpg)',
@@ -43,9 +57,24 @@ const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow, session }) => {
                 <Messages
                   conversationId={conversationId}
                   userId={session.user.id}
+                  // onNewMessage={() => {
+                  //   if (ref.current) {
+                  //     ref.current.scrollTop = ref.current.scrollHeight;
+                  //   }
+                  // }}
+                  scrollToBottom={scrollToBottom}
                 />
+                <div ref={messagesEndRef} />
               </div>
-              <Input session={session} conversationId={conversationId} />
+              <Input
+                session={session}
+                conversationId={conversationId}
+                onNewMessage={() => {
+                  if (ref.current) {
+                    ref.current.scrollTop = ref.current.scrollHeight;
+                  }
+                }}
+              />
             </div>
           </>
         ) : (

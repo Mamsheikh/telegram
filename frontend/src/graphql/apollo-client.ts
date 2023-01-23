@@ -17,6 +17,11 @@ const wsLink =
           connectionParams: async () => ({
             session: await getSession(),
           }),
+          lazy: false, // make the client connect immediately
+          on: {
+            connected: () => console.log('graphql-ws connected'),
+            error: (err) => console.log(err),
+          },
         })
       )
     : null;
