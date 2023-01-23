@@ -47,7 +47,7 @@ const FeedWrapper: React.FC<FeedWrapperProps> = ({ setShow, session }) => {
               {/* )} */}
               <div
                 ref={ref}
-                className='h-screen overflow-hidden overflow-y-auto px-4 py-2'
+                className='h-screen overflow-hidden overflow-y-auto px-4 py-2  scrollbar-w-2 scrollbar-h-1` scrollbar-thumb-rounded scrollbar-thumb-gray-900 scrollbar-track-neutral  scrollbar-thin'
                 style={{
                   backgroundImage: 'url(images/peakpx.jpg)',
                   objectFit: 'cover',
