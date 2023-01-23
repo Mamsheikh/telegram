@@ -13,6 +13,7 @@ interface ConversationItemProps {
   onClick: () => void;
   isSelected: boolean;
   userId: string;
+  hasSeenLatestMessage?: boolean;
 }
 
 const formatRelativeLocale = {
@@ -27,6 +28,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   onClick,
   isSelected,
   userId,
+  hasSeenLatestMessage,
 }) => {
   const handleClick = (event: React.MouseEvent) => {
     if (event.type === 'click') {
@@ -83,9 +85,11 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
             },
           })}
         </span>
-        <div className='h-5 w-5 rounded-full bg-telegram-blue'>
-          <span className='text-white text-xs flex justify-center'>2</span>
-        </div>
+        {hasSeenLatestMessage && (
+          <div className='h-5 w-5 rounded-full bg-telegram-blue'>
+            <span className='text-white text-xs flex justify-center'>2</span>
+          </div>
+        )}
       </div>
     </div>
   );

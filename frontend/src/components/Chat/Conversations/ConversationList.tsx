@@ -11,8 +11,11 @@ import { Session } from 'next-auth';
 interface ConversationListProps {
   session: Session;
   setShow: (show: boolean) => void;
-  conversations: Conversation[];
-  onViewConversation: (conversationId: string) => void;
+  conversations: ConversationPopulated[];
+  onViewConversation: (
+    conversationId: string,
+    hasSeenLatestMessage?: boolean
+  ) => void;
 }
 
 const ConversationList: React.FC<ConversationListProps> = ({
@@ -22,6 +25,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
   onViewConversation,
 }) => {
   const router = useRouter();
+  const { id: userId } = session.user;
   return (
     <div>
       <div className='flex items-center px-4 py-3 space-x-4'>
@@ -36,15 +40,26 @@ const ConversationList: React.FC<ConversationListProps> = ({
         />
       </div>
       <div className=''>
-        {conversations.map((conversation) => (
-          <ConversationItem
-            key={conversation.id}
-            userId={session.user.id}
-            conversation={conversation}
-            onClick={() => onViewConversation(conversation.id)}
-            isSelected={router.query.conversationId === conversation.id}
-          />
-        ))}
+        {conversations.map((conversation) => {
+          const participant = conversation.participants.find(
+            (p) => p.user.id === userId
+          );
+          return (
+            <ConversationItem
+              key={conversation.id}
+              userId={session.user.id}
+              conversation={conversation}
+              onClick={() =>
+                onViewConversation(
+                  conversation.id,
+                  participant?.hasSeenLatestMessage
+                )
+              }
+              hasSeenLatestMessage={participant?.hasSeenLatestMessage}
+              isSelected={router.query.conversationId === conversation.id}
+            />
+          );
+        })}
       </div>
     </div>
   );

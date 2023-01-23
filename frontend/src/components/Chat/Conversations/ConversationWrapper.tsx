@@ -55,8 +55,13 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
     });
   };
 
-  const onViewConversation = async (conversationId: string) => {
+  const onViewConversation = async (
+    conversationId: string,
+    hasSeenLatestMessage?: boolean
+  ) => {
     router.push({ query: { conversationId } });
+
+    if (hasSeenLatestMessage) return;
   };
 
   const openModal = () => {
