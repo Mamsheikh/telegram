@@ -42,8 +42,10 @@ const ConversationList: React.FC<ConversationListProps> = ({
       <div className=''>
         {conversations.map((conversation) => {
           const participant = conversation.participants.find(
-            (p) => p.user.id === userId
+            (p) => p.user.id === 'cld3omx9f0000iezckrqaj7xe'
           );
+          console.log(conversation.participants);
+
           return (
             <ConversationItem
               key={conversation.id}
@@ -56,6 +58,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
                 )
               }
               hasSeenLatestMessage={participant?.hasSeenLatestMessage}
+              unSeenMessageCount={participant?.unSeenMessageCount}
               isSelected={router.query.conversationId === conversation.id}
             />
           );

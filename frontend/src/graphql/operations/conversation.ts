@@ -7,9 +7,12 @@ const ConversationFields = `
       participants {
         id
         user {
+          id
           image
           username
         }
+        hasSeenLatestMessage
+        unSeenMessageCount
       }
     updatedAt
     createdAt
@@ -57,7 +60,16 @@ export const conversationOperations = {
         }
       }
     `,
+    markConversationAsRead: gql`
+      mutation MarkConversationAsRead(
+        $userId: String!
+        $conversationId: String!
+      ) {
+        markConversationAsRead(userId: $userId, conversationId: $conversationId)
+      }
+    `,
   },
+
   Subscriptions: {
     conversationCreated: gql`
       subscription ConversationCreated {

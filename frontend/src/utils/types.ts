@@ -62,7 +62,12 @@ export interface Conversation {
 
 export interface Participant {
   id: string;
+  userId: string;
   user: User;
+  conversationId: string;
+  converstion: ConversationPopulated;
+  hasSeenLatestMessage: boolean;
+  unSeenMessageCount: number;
 }
 export interface ConversationsData {
   conversations: Array<ConversationPopulated>;
@@ -102,7 +107,12 @@ export type ConversationPopulated = Prisma.ConversationGetPayload<{
   include: typeof conversationPopulated;
 }>;
 
-// export type ParticipantPopulated = Prisma.ConversationParticipantGetPayload<{
+// export const participatsPopulated =
+//   Prisma.validator<Prisma.ConversationParticipantInclude>()({
+//     user: { select: { id: true, username: true, image: true } },
+//   });
+
+// export type ParticipantPopulated = Prisma.Conversat<{
 //   include: typeof participatsPopulated;
 // }>;
 

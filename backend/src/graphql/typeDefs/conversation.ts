@@ -39,6 +39,8 @@ const typeDefs = gql`
   type Participant {
     id: String
     user: User
+    hasSeenLatestMessage: Boolean
+    unSeenMessageCount: Int
   }
 
   enum ConversationType {

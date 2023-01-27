@@ -14,6 +14,7 @@ interface ConversationItemProps {
   isSelected: boolean;
   userId: string;
   hasSeenLatestMessage?: boolean;
+  unSeenMessageCount?: number;
 }
 
 const formatRelativeLocale = {
@@ -29,7 +30,12 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   isSelected,
   userId,
   hasSeenLatestMessage,
+  unSeenMessageCount,
 }) => {
+  console.log('userId', userId);
+  console.log('hasSeenLatestMessage', hasSeenLatestMessage);
+  console.log('unSeenMessageCount', unSeenMessageCount);
+
   const handleClick = (event: React.MouseEvent) => {
     if (event.type === 'click') {
       onClick();
@@ -85,9 +91,11 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
             },
           })}
         </span>
-        {hasSeenLatestMessage && (
+        {hasSeenLatestMessage === false && (
           <div className='h-5 w-5 rounded-full bg-telegram-blue'>
-            <span className='text-white text-xs flex justify-center'>2</span>
+            <span className='text-white text-xs flex justify-center'>
+              {unSeenMessageCount}
+            </span>
           </div>
         )}
       </div>
